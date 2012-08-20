@@ -1,14 +1,15 @@
+package eomprogramming.algebratiles;
 import java.awt.*;
 
 import javax.swing.*;
 
 import java.awt.event.*;
 
-public class hawtGUI extends JFrame implements ActionListener
+public class MainGUI extends JFrame implements ActionListener
 {
 	JLabel welcomeLabel;
-	JButton easyButton, mediumButton, nightmareButton;
-	public hawtGUI()
+	JButton easyButton, mediumButton, hardButton;
+	public MainGUI()
 	{
 		super("Menu");
 		
@@ -26,7 +27,7 @@ public class hawtGUI extends JFrame implements ActionListener
 	
 	public void makeButtons()
 	{
-		welcomeLabel = new JLabel("Hao are Wei so Good at Factoring?");
+		welcomeLabel = new JLabel("Algebra Tiles");
 		welcomeLabel.setBounds(50, 25, 400, 100);
 		welcomeLabel.setFont(new Font("Impact", Font.BOLD, 20));
 		add(welcomeLabel);
@@ -49,14 +50,14 @@ public class hawtGUI extends JFrame implements ActionListener
 		mediumButton.addActionListener(this);
 		add(mediumButton);
 		
-		nightmareButton = new JButton("Level 4");
-		nightmareButton.setBounds(50, 425, 300, 50);
-		nightmareButton.setAlignmentX(CENTER_ALIGNMENT);
-		nightmareButton.setForeground(Color.RED);
-		nightmareButton.setBackground(Color.GREEN);
-		nightmareButton.setFont(new Font("Impact", Font.BOLD, 20));
-		nightmareButton.addActionListener(this);
-		add(nightmareButton);
+		hardButton = new JButton("Level 4");
+		hardButton.setBounds(50, 425, 300, 50);
+		hardButton.setAlignmentX(CENTER_ALIGNMENT);
+		hardButton.setForeground(Color.RED);
+		hardButton.setBackground(Color.GREEN);
+		hardButton.setFont(new Font("Impact", Font.BOLD, 20));
+		hardButton.addActionListener(this);
+		add(hardButton);
 	}
 	
 	public void actionPerformed(ActionEvent e)
@@ -69,7 +70,7 @@ public class hawtGUI extends JFrame implements ActionListener
 		{
 			
 		}
-		else if(e.getSource() == nightmareButton)
+		else if(e.getSource() == hardButton)
 		{
 			
 		}

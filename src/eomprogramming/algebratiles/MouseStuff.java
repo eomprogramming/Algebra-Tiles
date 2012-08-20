@@ -1,3 +1,4 @@
+package eomprogramming.algebratiles;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -9,7 +10,7 @@ public class MouseStuff implements MouseListener
 	JLabel[] square = new JLabel[squareNumber];
 	public MouseStuff()
 	{
-		for(int i=0;i<squ)
+		//for(int i=0;i<squ)
 	}
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
