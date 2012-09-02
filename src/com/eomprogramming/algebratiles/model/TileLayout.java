@@ -42,14 +42,14 @@ public class TileLayout {
 			addRow(row, Tile.ONE);
 			addCol(col, Tile.ONE);
 		}
-		if(row == rowType.size() && col == colType.size())
+		if(row == rowSign.size() && col == colSign.size())
 		{
 			rowSign.add(true);
 			colSign.add(isPositive);
 		}
-		else if(row == rowType.size())
+		else if(row == rowSign.size())
 			rowSign.add(!isPositive ^ colSign.get(col));
-		else if(col == colType.size())
+		else if(col == colSign.size())
 			colSign.add(!isPositive ^ rowSign.get(row));
 	}
 	
