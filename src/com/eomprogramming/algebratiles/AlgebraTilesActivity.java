@@ -5,7 +5,10 @@ import java.util.LinkedList;
 import com.eomprogramming.algebratiles.model.*;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +26,7 @@ import android.widget.SlidingDrawer;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AlgebraTilesActivity extends Activity implements OnClickListener {
 
@@ -33,6 +37,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private RowGroup rowgroup;
 	private ScrollView verticalScroll;
 	private SlidingDrawer slidingDrawer;
+	
+	final CharSequence[] items = {"1", "X", "X^2"};
 	
     /** Called when the activity is first created. */
     @Override
@@ -103,7 +109,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     	{
 
    //     	slidingDrawer.animateOpen();    		
-  //  		verticalScroll.setVisibility(ScrollView.GONE);    		
+  //  		verticalScroll.setVisibility(ScrollView.GONE);
+    		
+    		//this.showDialog(0);
+    		
 	    	int type = 0; //get information from user
 	    	boolean isPositive = true; //get information from user
 	    	
@@ -249,5 +258,17 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				break;
 		}
 		
+	}
+	
+	protected Dialog onCreateDialog(int id) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Pick a color");
+		builder.setItems(items, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int item) {
+		        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+		    }
+		});
+		AlertDialog alert = builder.create();
+		return alert;
 	}
 }

@@ -57,9 +57,9 @@ public class Tile {
 	public static String getSymbol(int type) {
 		switch(type){
 			case Tile.X_SQUARED:
-				return "2";
+				return "X^2";
 			case Tile.X:
-				return "x";
+				return "X";
 			case Tile.ONE:
 				return "1";
 			case Tile.PLUS:
