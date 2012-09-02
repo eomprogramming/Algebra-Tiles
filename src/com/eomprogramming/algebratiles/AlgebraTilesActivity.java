@@ -102,15 +102,12 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		rowgroup = new RowGroup();
     }
     public void onClick(View v) {
-    	Button pressed = (Button)v;
-    	String pos = pressed.getHint().toString();
-    	int row = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
-    	int col = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
+    	sPressed = (Button)v;
+    	String pos = sPressed.getHint().toString();
+    	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
+    	sCol = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
     	if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
     	{
-    		sPressed = pressed;
-    		sRow = row;
-    		sCol = col;
    //     	slidingDrawer.animateOpen();    		
   //  		verticalScroll.setVisibility(ScrollView.GONE);
     		this.showDialog(0);
@@ -251,7 +248,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
 		        //Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
-		    	int type = 0; //get information from user
+		    	int type = item; //get information from user
 		    	boolean isPositive = true; //get information from user
 		    	
 		    	if(tileLayout.isValid(sRow, sCol, type, isPositive))
