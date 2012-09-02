@@ -84,18 +84,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		main_layout.addView(verticalScroll);
 		
 		tileLayout = new TileLayout();
-		
-		// add sliding Drawer
-		LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		slidingDrawer = (SlidingDrawer)inflater.inflate(R.layout.sliding_drawer, main_layout, false);
-		main_layout.addView(slidingDrawer);
-
-		// get Layout for place your content in sliding drawer
-		LinearLayout slideContent = (LinearLayout)slidingDrawer.findViewById(R.id.content);
-		TextView instText = new TextView(this);
-		instText.setText("Pick a Tile: ");
-		slideContent.addView(instText);
-		
+					
 		setContentView(main_layout);
 		
 		//Create the non-gui stuff
@@ -225,6 +214,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		switch(type){
 			case Tile.ONE:
 				bparams = new TableRow.LayoutParams(SIZE,SIZE);
+				bparams.setMargins(5, 5, 5, 5);		
 				b.setLayoutParams(bparams);
 				break;
 			case Tile.X:
@@ -232,10 +222,12 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					bparams = new TableRow.LayoutParams(SIZE*2,SIZE);
 				else
 					bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
+				bparams.setMargins(5, 5, 5, 5);		
 				b.setLayoutParams(bparams);
 				break;
 			case Tile.X_SQUARED:
 				bparams = new TableRow.LayoutParams(SIZE*2,SIZE*2);
+				bparams.setMargins(5, 5, 5, 5);		
 				b.setLayoutParams(bparams);
 				break;
 		}
