@@ -111,9 +111,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		clearButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
-				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );
+				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
 				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
 				startActivity(i);
+				overridePendingTransition(0, 0);
 			}			
 		});	
 		clearButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
