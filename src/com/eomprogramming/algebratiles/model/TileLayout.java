@@ -23,50 +23,53 @@ public class TileLayout {
 		{
 			if(isHorizontal(row, col))
 			{
-				addRow(row, Tile.ONE, isPositive);
-				addCol(col, Tile.X, isPositive);
+				addRow(row, Tile.ONE);
+				addCol(col, Tile.X);
 			}
 			else
 			{
-				addRow(row, Tile.X, isPositive);
-				addCol(col, Tile.ONE, isPositive);
+				addRow(row, Tile.X);
+				addCol(col, Tile.ONE);
 			}
 		}
 		else if(type == Tile.X_SQUARED)
 		{
-			addRow(row, Tile.X, isPositive);
-			addCol(col, Tile.X, isPositive);
+			addRow(row, Tile.X);
+			addCol(col, Tile.X);
 		}
 		else
 		{
-			addRow(row, Tile.ONE, isPositive);
-			addCol(col, Tile.ONE, isPositive);
+			addRow(row, Tile.ONE);
+			addCol(col, Tile.ONE);
 		}
-	}
-	
-	public void addRow(int row, int type, boolean isPositive)
-	{
-		if(row == rowType.size())
+		if(row == rowType.size() && col == colType.size())
 		{
-			rowType.add(type);
-			rowSign.add(isPositive);
-		}
-	}
-	
-	public void addCol(int col, int type, boolean isPositive)
-	{
-		if(col == colType.size())
-		{
-			colType.add(type);
+			rowSign.add(true);
 			colSign.add(isPositive);
 		}
+		else if(row == rowType.size())
+			rowSign.add(!isPositive ^ colSign.get(col));
+		else if(col == colType.size())
+			colSign.add(!isPositive ^ rowSign.get(row));
+	}
+	
+	public void addRow(int row, int type)
+	{
+		if(row == rowType.size())
+			rowType.add(type);
+	}
+	
+	public void addCol(int col, int type)
+	{
+		if(col == colType.size())
+			colType.add(type);
 	}
 	
 	public boolean isValid(int row, int col, int type, boolean isPositive)
 	{
 		if(row < rowType.size() && col < colType.size())
 		{
-			if(rowSign.get(row) && colSign.get(col) && !isPositive)
+			if(rowSign.get(row) ^ colSign.get(col) ^ !isPositive)
 				return false;
 			if(rowType.get(row) == Tile.X && colType.get(col) == Tile.X)
 				return type == Tile.X_SQUARED;
