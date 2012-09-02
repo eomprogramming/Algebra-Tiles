@@ -37,8 +37,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private RowGroup rowgroup;
 	private ScrollView verticalScroll;
 	private SlidingDrawer slidingDrawer;
+	int sRow;
+	int sCol;
+	Button sPressed;
 	
-	final CharSequence[] items = {"1", "X", "X^2"};
+	final CharSequence[] items = {"X^2", "X", "1"};
 	
     /** Called when the activity is first created. */
     @Override
@@ -98,37 +101,19 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		//Create the non-gui stuff
 		rowgroup = new RowGroup();
     }
-    int counter = 0;
     public void onClick(View v) {
     	Button pressed = (Button)v;
     	String pos = pressed.getHint().toString();
-    	int x = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
-    	int y = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
-    	
-    	if(rowgroup.getRows().get(x).getTiles().get(y).getType() == Tile.PLUS)
+    	int row = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
+    	int col = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
+    	if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
     	{
-
+    		sPressed = pressed;
+    		sRow = row;
+    		sCol = col;
    //     	slidingDrawer.animateOpen();    		
   //  		verticalScroll.setVisibility(ScrollView.GONE);
-    		
-    		//this.showDialog(0);
-    		
-	    	int type = 0; //get information from user
-	    	boolean isPositive = true; //get information from user
-	    	
-	    	if(tileLayout.isValid(x, y, type, isPositive))
-	    	{
-	    		rowgroup.addTile(x, y, new Tile(type, isPositive));
-				button.get(v.getId()).setText(Tile.getSymbol(type));
-				updateButtons(rowgroup.updatePlusTiles(x, y),x,y);
-				if(!isPositive)
-				{
-					//make the button blue
-				}
-				setButton(x, y, pressed, type);
-				
-				tileLayout.add(x, y, type, isPositive);
-	    	}
+    		this.showDialog(0);
     	}
 
 	}
@@ -265,7 +250,23 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		builder.setTitle("Pick a color");
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
-		        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+		        //Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+		    	int type = 0; //get information from user
+		    	boolean isPositive = true; //get information from user
+		    	
+		    	if(tileLayout.isValid(sRow, sCol, type, isPositive))
+		    	{
+		    		rowgroup.addTile(sRow, sCol, new Tile(type, isPositive));
+					button.get(sPressed.getId()).setText(Tile.getSymbol(type));
+					updateButtons(rowgroup.updatePlusTiles(sRow, sCol),sRow,sCol);
+					if(!isPositive)
+					{
+						//make the button blue
+					}
+					setButton(sRow, sCol, sPressed, type);
+					
+					tileLayout.add(sRow, sCol, type, isPositive);
+		    	}
 		    }
 		});
 		AlertDialog alert = builder.create();
