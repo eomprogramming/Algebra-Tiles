@@ -120,6 +120,25 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		main_layout.addView(clearButton);
 		
+		Button submitButton = new Button(this);
+		submitButton.setText("Submit");
+		submitButton.setPadding(10, 10,10, 10);
+		submitButton.setTextSize(18);
+		submitButton.setTypeface(null,Typeface.BOLD);
+		submitButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		submitButton.setTextColor(Color.rgb(60, 60, 60));
+		submitButton.setOnClickListener(new OnClickListener(){
+			public void onClick(View arg0) {
+				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+				startActivity(i);
+				overridePendingTransition(0, 0);
+			}			
+		});	
+		submitButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		
+		main_layout.addView(submitButton);
+		
 		//Create the non-gui stuff
 		rowgroup = new RowGroup();
     }
@@ -133,7 +152,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     	{
     		this.showDialog(0);
     	}
-
+    	else if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() != Tile.EMPTY)
+    	{
+    		//remove button
+    	}
 	}
 
 	private void updateButtons(LinkedList<Pos> pos, int in_row, int in_col) {
