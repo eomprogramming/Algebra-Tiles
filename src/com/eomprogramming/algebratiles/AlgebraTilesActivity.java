@@ -109,7 +109,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		clearButton.setBackgroundColor(Color.rgb(230, 230, 230));
 		clearButton.setTextColor(Color.rgb(60, 60, 60));
 		clearButton.setOnClickListener(new OnClickListener(){
-			@Override
 			public void onClick(View arg0) {
 				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );
 				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );

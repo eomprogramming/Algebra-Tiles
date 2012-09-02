@@ -86,6 +86,7 @@ public class TileLayout {
 				return true;
 			if(type == Tile.ONE && rowType.get(row) == Tile.ONE)
 				return true;
+			return false;
 		}
 		if(col < colType.size())
 		{
@@ -95,6 +96,7 @@ public class TileLayout {
 				return true;
 			if(type == Tile.ONE && colType.get(col) == Tile.ONE)
 				return true;
+			return false;
 		}
 		return true;
 	}
