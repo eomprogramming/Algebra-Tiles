@@ -2,27 +2,27 @@ package com.eomprogramming.algebratiles;
 
 import java.util.LinkedList;
 
+import com.eomprogramming.algebratiles.math.QEquationGenerator;
 import com.eomprogramming.algebratiles.model.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.SlidingDrawer;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -36,12 +36,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private TableLayout table;
 	private RowGroup rowgroup;
 	private ScrollView verticalScroll;
-	private SlidingDrawer slidingDrawer;
 	int sRow;
 	int sCol;
 	Button sPressed;
 	
-	final CharSequence[] items = {"X^2", "X", "1"};
+	final CharSequence[] items = {"X^2","-X^2", "X","-X", "1","-1"};
 	
     /** Called when the activity is first created. */
     @Override
@@ -52,9 +51,24 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				
 		LinearLayout main_layout = new LinearLayout(this);
 		main_layout.setOrientation(LinearLayout.VERTICAL);
+		main_layout.setBackgroundColor(Color.rgb(60, 60, 60));
+		
+		TextView equationText = new TextView(this);
+		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		equationText.setText(QEquationGenerator.generateRandom().toString());
+		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
+		equationText.setTextColor(Color.rgb(60, 60, 60));
+		equationText.setGravity(Gravity.CENTER);
+		equationText.setTypeface(null,Typeface.BOLD);
+		equationText.setTextSize(28);
+		equationText.setPadding(0, 15, 0, 15);
+		main_layout.addView(equationText);
 		
 		verticalScroll = new ScrollView(this);
-		verticalScroll.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+		params.weight = 1.0f;
+		verticalScroll.setLayoutParams(params);
 		
 		HorizontalScrollView horizontalScroll = new HorizontalScrollView(this);
 		horizontalScroll.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
@@ -87,9 +101,29 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					
 		setContentView(main_layout);
 		
+		Button clearButton = new Button(this);
+		clearButton.setText("Restart");
+		clearButton.setPadding(10, 10,10, 10);
+		clearButton.setTextSize(18);
+		clearButton.setTypeface(null,Typeface.BOLD);
+		clearButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		clearButton.setTextColor(Color.rgb(60, 60, 60));
+		clearButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+				startActivity(i);
+			}			
+		});	
+		clearButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		
+		main_layout.addView(clearButton);
+		
 		//Create the non-gui stuff
 		rowgroup = new RowGroup();
     }
+    
     public void onClick(View v) {
     	sPressed = (Button)v;
     	String pos = sPressed.getHint().toString();
@@ -97,8 +131,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     	sCol = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
     	if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
     	{
-   //     	slidingDrawer.animateOpen();    		
-  //  		verticalScroll.setVisibility(ScrollView.GONE);
     		this.showDialog(0);
     	}
 
@@ -195,12 +227,13 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		b.setText("+");
 		b.setPadding(10, 10,10, 10);
 		b.setHint(r+","+c);		
-		b.setBackgroundColor(Color.rgb(200,0,0));		
+		b.setTextSize(18);
+		b.setTypeface(null,Typeface.BOLD);
+		b.setBackgroundColor(Color.rgb(181,230,21));		
 		b.setId(button.size());
 		b.setOnClickListener(this);	
 		b.setGravity(Gravity.CENTER);
-		
-		TableRow.LayoutParams bparams = new TableRow.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+		TableRow.LayoutParams bparams = new TableRow.LayoutParams(SIZE,LayoutParams.FILL_PARENT);
 		bparams.setMargins(5, 5, 5, 5);		
 		b.setLayoutParams(bparams);
 				
@@ -211,6 +244,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 	public void setButton(int r, int c, Button b, int type){
 		TableRow.LayoutParams bparams;
+		if(rowgroup.getRows().get(r).getTiles().get(c).isPositive())
+			b.setBackgroundColor(Color.rgb(237,28,36));
+		else
+			b.setBackgroundColor(Color.rgb(0,162,232));
+		
 		switch(type){
 			case Tile.ONE:
 				bparams = new TableRow.LayoutParams(SIZE,SIZE);
@@ -236,29 +274,28 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Pick a color");
+		builder.setTitle("Pick a tile");
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
 		        //Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
-		    	int type = item; //get information from user
-		    	boolean isPositive = true; //get information from user
-		    	
+		    	int type = item/2; //get information from user
+		    	boolean isPositive = item%2==0; //get information from user
+		    	Log.d("a-t", sRow+","+sCol);
 		    	if(tileLayout.isValid(sRow, sCol, type, isPositive))
 		    	{
 		    		rowgroup.addTile(sRow, sCol, new Tile(type, isPositive));
 					button.get(sPressed.getId()).setText(Tile.getSymbol(type));
 					updateButtons(rowgroup.updatePlusTiles(sRow, sCol),sRow,sCol);
-					if(!isPositive)
-					{
-						//make the button blue
-					}
 					setButton(sRow, sCol, sPressed, type);
 					
 					tileLayout.add(sRow, sCol, type, isPositive);
+		    	}else{
+		    		Toast.makeText(getApplicationContext(), "Can't place selected tile.", Toast.LENGTH_SHORT).show();
 		    	}
 		    }
 		});
 		AlertDialog alert = builder.create();
 		return alert;
 	}
+	
 }
