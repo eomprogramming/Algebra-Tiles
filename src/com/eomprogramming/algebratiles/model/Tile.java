@@ -37,4 +37,37 @@ public class Tile {
 		this.positive = positive;
 	}
 	
+	public String getSymbol() {
+		switch(type){
+			case Tile.X_SQUARED:
+				return "2";
+			case Tile.X:
+				return "x";
+			case Tile.ONE:
+				return "1";
+			case Tile.PLUS:
+				return "+";
+			case Tile.EMPTY:
+				return " ";
+			default:
+				return " ";
+		}
+	}
+	
+	public static String getSymbol(int type) {
+		switch(type){
+			case Tile.X_SQUARED:
+				return "2";
+			case Tile.X:
+				return "x";
+			case Tile.ONE:
+				return "1";
+			case Tile.PLUS:
+				return "+";
+			case Tile.EMPTY:
+				return " ";
+			default:
+				return " ";
+		}
+	}
 }

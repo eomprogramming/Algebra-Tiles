@@ -27,7 +27,8 @@ import android.widget.TextView;
 public class AlgebraTilesActivity extends Activity implements OnClickListener {
 
 	private LinkedList<Button> button;
-	LinkedList<TableRow> row;
+	private LinkedList<TableRow> row;
+	private TileLayout tileLayout;
 	private TableLayout table;
 	private RowGroup rowgroup;
 	private ScrollView verticalScroll;
@@ -73,7 +74,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		verticalScroll.addView(horizontalScroll);
 		main_layout.addView(verticalScroll);
 		
-
+		tileLayout = new TileLayout();
+		
 		// add sliding Drawer
 		LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		slidingDrawer = (SlidingDrawer)inflater.inflate(R.layout.sliding_drawer, main_layout, false);
@@ -90,24 +92,34 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		//Create the non-gui stuff
 		rowgroup = new RowGroup();
     }
-    
-    @Override
-	public void onClick(View v) {
+    int counter = 0;
+    public void onClick(View v) {
     	Button pressed = (Button)v;
     	String pos = pressed.getHint().toString();
     	int x = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
     	int y = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
     	
-    	if(rowgroup.getRows().get(x).getTiles().get(y).getType() == Tile.PLUS){
+    	if(rowgroup.getRows().get(x).getTiles().get(y).getType() == Tile.PLUS)
+    	{
 
    //     	slidingDrawer.animateOpen();    		
   //  		verticalScroll.setVisibility(ScrollView.GONE);    		
+	    	int type = 0; //get information from user
+	    	boolean isPositive = true; //get information from user
 	    	
-	    	rowgroup.addTile(x, y, new Tile(Tile.X,true));
-			
-			button.get(v.getId()).setText("x^2");
-			updateButtons(rowgroup.updatePlusTiles(x, y),x,y);
-			setButton(pressed, Tile.X_SQUARED);
+	    	if(tileLayout.isValid(x, y, type, isPositive))
+	    	{
+	    		rowgroup.addTile(x, y, new Tile(type, isPositive));
+				button.get(v.getId()).setText(Tile.getSymbol(type));
+				updateButtons(rowgroup.updatePlusTiles(x, y),x,y);
+				if(!isPositive)
+				{
+					//make the button blue
+				}
+				setButton(x, y, pressed, type);
+				
+				tileLayout.add(x, y, type, isPositive);
+	    	}
     	}
 
 	}
@@ -217,11 +229,18 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 	public final int SIZE = 60;
 	
-	public void setButton(Button b, int type){
+	public void setButton(int r, int c, Button b, int type){
 		TableRow.LayoutParams bparams;
 		switch(type){
 			case Tile.ONE:
 				bparams = new TableRow.LayoutParams(SIZE,SIZE);
+				b.setLayoutParams(bparams);
+				break;
+			case Tile.X:
+				if(tileLayout.isHorizontal(r, c))
+					bparams = new TableRow.LayoutParams(SIZE*2,SIZE);
+				else
+					bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
 				b.setLayoutParams(bparams);
 				break;
 			case Tile.X_SQUARED:

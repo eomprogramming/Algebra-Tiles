@@ -15,14 +15,11 @@ public class RowGroup {
 	}
 	
 	public boolean addTile(int row, int col, Tile t){
-		if(rows.size() <= row || rows.get(row).getTiles().size() <= col)
+		if(rows.size() <= row || rows.get(row).getTiles().size() <= col || rows.get(row).getTiles().get(col).getType() != Tile.PLUS)
 			return false;
-		if(rows.get(row).getTiles().get(col).getType() == Tile.PLUS){
-			rows.get(row).getTiles().set(col, t);
-			//updatePlusTiles(row,col);
-			return true;
-		}
-		return false;
+		rows.get(row).getTiles().set(col, t);
+		//updatePlusTiles(row,col);
+		return true;
 	}
 	
 	public LinkedList<Pos> updatePlusTiles(int row, int col){
@@ -91,27 +88,12 @@ public class RowGroup {
 		for(Row r: rows){
 			String line = "";
 			for(Tile t : r.getTiles()){
-				line+=getSymbol(t.getType());
+				line+=t.getSymbol();
 			}
 			Log.d("a-t", line);
 		}
 		Log.d("a-t", "-----------------------------");
 	}
 	
-	private String getSymbol(int type) {
-		switch(type){
-			case Tile.X_SQUARED:
-				return "2";
-			case Tile.X:
-				return "x";
-			case Tile.ONE:
-				return "1";
-			case Tile.PLUS:
-				return "+";
-			case Tile.EMPTY:
-				return " ";
-			default:
-				return " ";
-		}
-	}
+	
 }
