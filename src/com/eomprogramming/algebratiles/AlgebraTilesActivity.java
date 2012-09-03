@@ -200,11 +200,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					button.add(getButton(p.row,p.col));
 					row.get(p.row).addView(button.get(button.size()-1));
 				}
-				if(p.row == 0){
+				if(p.col == tileLayout.getPrevNumCols()+1){
 					//Update helper text at top
 					topButtons.add(getDisplayButton());
 					topRow.addView(topButtons.getLast());
-					updateTopDisplayText();
+					updateTopDisplayText(p.col-1);
 				}
 			}
 			
@@ -250,12 +250,13 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 						row.get(p.row).addView(button.get(button.size()-1));		
 					}
 				}
-				if(p.col==0){
+				if(p.row == tileLayout.getPrevNumRows()+1){
+					//update factors on the left
 					leftSideRows.add(new TableRow(this));
 					leftSideRows.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 					leftSideRows.getLast().addView(getDisplayButton());
 					leftTable.addView(leftSideRows.getLast());
-					this.updateLeftDisplayText();
+					this.updateLeftDisplayText(p.row-1);
 				}
 			}
 			
@@ -315,52 +316,43 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		return b;
 	}
 	
-    private void updateTopDisplayText(){
-    	for(int i=0;i<topButtons.size();i++){
-    		if(i != topButtons.size()-1){
-    			topButtons.get(i).setBackgroundColor(Color.rgb(100, 100, 100));	
-    			String text = "";
+    private void updateTopDisplayText(int i){
+    		topButtons.get(i).setBackgroundColor(Color.rgb(100, 100, 100));	
+			String text = "";
+			
+			if(!tileLayout.colSign.get(i))
+				text+="-";
+			
+    		if(tileLayout.colType.get(i)==Tile.X)
+    			text+="X";
+    		else
+    			text+="1";
     			
-    			if(!rowgroup.getRows().get(0).getTiles().get(i).isPositive())
-    				text+="-";
-    			
-	    		if(rowgroup.getRows().get(0).getTiles().get(i).getType()==Tile.X_SQUARED)
-	    			text+="X";
-	    		else
-	    			text+="1";
-	    			
-	    		topButtons.get(i).setText(text);
-    		}
-    	}
+    		topButtons.get(i).setText(text);
     }
     
-    private void updateLeftDisplayText(){
-    	for(int i=1;i<leftSideRows.size();i++){
-    		if(i != leftSideRows.size()-1){
-    			Button sideButton = (Button) leftSideRows.get(i).getChildAt(0);
-    			sideButton.setBackgroundColor(Color.rgb(100, 100, 100));	
-    			String text = "";
-    			TableRow.LayoutParams bparams;
-    			
-    			
-    			if(!rowgroup.getRows().get(i-1).getTiles().get(0).isPositive())
-    				text+="-";
-    			
-	    		if(rowgroup.getRows().get(i-1).getTiles().get(0).getType()==Tile.X_SQUARED){
-	    			text+="X";
-	    			bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
-		    		bparams.setMargins(5, 5, 5, 5);	
-		    		sideButton.setLayoutParams(bparams);	    			
-	    		}else{
-	    			text+="1";
-	    			bparams = new TableRow.LayoutParams(SIZE,SIZE);
-		    		bparams.setMargins(5, 5, 5, 5);	
-		    		sideButton.setLayoutParams(bparams);	    		    			
-	    		}
-	    		
-	    		sideButton.setText(text);
+    private void updateLeftDisplayText(int i){
+    		Button sideButton = (Button) leftSideRows.get(i+1).getChildAt(0);
+			sideButton.setBackgroundColor(Color.rgb(100, 100, 100));	
+			String text = "";
+			TableRow.LayoutParams bparams;
+			
+			if(!tileLayout.rowSign.get(i))
+				text+="-";
+			
+    		if(tileLayout.rowType.get(i)==Tile.X){
+    			text+="X";
+    			bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
+	    		bparams.setMargins(5, 5, 5, 5);	
+	    		sideButton.setLayoutParams(bparams);	    			
+    		}else{
+    			text+="1";
+    			bparams = new TableRow.LayoutParams(SIZE,SIZE);
+	    		bparams.setMargins(5, 5, 5, 5);	
+	    		sideButton.setLayoutParams(bparams);	    		    			
     		}
-    	}
+    		
+    		sideButton.setText(text);
     }
     
 	public final int SIZE = 60;
@@ -406,12 +398,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		    	Log.d("a-t", sRow+","+sCol);
 		    	if(tileLayout.isValid(sRow, sCol, type, isPositive))
 		    	{
+		    		tileLayout.add(sRow, sCol, type, isPositive);
 		    		rowgroup.addTile(sRow, sCol, new Tile(type, isPositive));
 					button.get(sPressed.getId()).setText(Tile.getSymbol(type));
 					updateButtons(rowgroup.updatePlusTiles(sRow, sCol),sRow,sCol);
-					setButton(sRow, sCol, sPressed, type);
-					
-					tileLayout.add(sRow, sCol, type, isPositive);
+					setButton(sRow, sCol, sPressed, type);					
 		    	}else{
 		    		Toast.makeText(getApplicationContext(), "Can't place selected tile.", Toast.LENGTH_SHORT).show();
 		    	}
