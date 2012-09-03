@@ -77,6 +77,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		horizontalScroll.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		
 		LinearLayout layout = new LinearLayout(this);
+		layout.setOrientation(LinearLayout.HORIZONTAL);
 		layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		
 		table = new TableLayout(this);
@@ -181,10 +182,12 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					button.add(getButton(p.row,p.col));
 					row.get(p.row).addView(button.get(button.size()-1));
 				}
-				//Update helper text at top
-				topButtons.add(getDisplayButton());
-				topRow.addView(topButtons.getLast());
-				updateTopDisplayText();
+				if(p.row == 0){
+					//Update helper text at top
+					topButtons.add(getDisplayButton());
+					topRow.addView(topButtons.getLast());
+					updateTopDisplayText();
+				}
 			}
 			
 			//CHECK LEFT
@@ -193,31 +196,33 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				row.get(p.row).removeViewAt(p.col);
 				row.get(p.row).addView(button.get(button.size()-1),p.col);		
 			}
-			
+			Log.d("a-t", "p.row: "+p.row+"p.col: "+p.col);
 			//CHECK BOTTOM
 			if(p.row > in_row && p.col == in_col){
-				
+				Log.d("a-t", "addding down...");
 				//Check if we have to add a row
 				if(p.row >= row.size()){
+					Log.d("a-t","Newww");
 					row.add(new TableRow(this));
-					row.get(row.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+					row.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 					for(int i = 0; i <= p.col; i++){					
 						if(templateRow.getTiles().get(i).getType() == Tile.PLUS){	
+							Log.d("a-t", "++");
 							button.add(getButton(p.row,p.col));	
-							row.get(p.row).addView(button.get(button.size()-1));
+							row.getLast().addView(button.getLast());
 						}else{
+							Log.d("a-t", "emptyyy");
 							//If it's an empty block, add a place holding view
-							View view = new View(this);
-							row.get(p.row).addView(view);
+							row.getLast().addView(getDisplayButton());
 						}
 					}				
-					table.addView(row.get(p.row));
+					table.addView(row.getLast());
+					table.invalidate();
 					
 				}else{
 					while(row.get(p.row).getChildCount() < p.col){
 						if(templateRow.getTiles().get(row.get(p.row).getChildCount()).getType() == Tile.EMPTY){
-							View view = new View(this);
-							row.get(p.row).addView(view);
+							row.get(p.row).addView(getDisplayButton());
 						}
 					}
 						
