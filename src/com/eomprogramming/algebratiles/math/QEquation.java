@@ -21,12 +21,10 @@ public class QEquation {
 	}
 
 	public void setLeftCoefficient(int l){
-		if(l > 0)
 			leftCo = l;
 	}
 	
 	public void setRightCoefficient(int r){
-		if(r > 0)
 			rightCo = r;
 	}
 	
@@ -67,9 +65,6 @@ public class QEquation {
 	}
 
 	public void generateStandardForm(){
-		if(leftCo < 0 || rightCo < 0)
-			return;
-		
 		a = leftCo * rightCo;
 		b = leftCo * r + rightCo * s;
 		c = r * s;
