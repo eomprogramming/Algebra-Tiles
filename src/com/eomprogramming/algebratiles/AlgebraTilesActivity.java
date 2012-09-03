@@ -40,6 +40,9 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	int sCol;
 	Button sPressed;
 	
+	private TableRow topRow;
+	private LinkedList<Button> topButtons;
+	
 	final CharSequence[] items = {"X^2","-X^2", "X","-X", "1","-1"};
 	
     /** Called when the activity is first created. */
@@ -83,24 +86,20 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		row = new LinkedList<TableRow>();
 								
 		row.add(new TableRow(this));
-		row.add(new TableRow(this));
 		row.get(0).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-		row.get(1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-		
-		button.add(getEmptyButton(0,0));
-		button.add(getPlusButton(0,1));
-		button.add(getPlusButton(1,0));
-		button.add(getPlusButton(1,1));
-		
+		button.add(getButton(0,0));		
 		row.get(0).addView(button.get(0));
-		row.get(0).addView(button.get(1));
-		row.get(1).addView(button.get(2));
-		row.get(1).addView(button.get(3));
 	
-		table.addView(row.get(0));
-		table.addView(row.get(1));
+		topRow = new TableRow(this);
+		topRow.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		topButtons = new LinkedList<Button>();
+		topButtons.add(getDisplayButton());
+		topRow.addView(topButtons.get(0));
 		
-		table.setPadding(10, 30, 10, 20);
+		table.addView(topRow);
+		table.addView(row.get(0));
+		
+		table.setPadding(10, 10, 10, 10);
 		layout.addView(table);
 		horizontalScroll.addView(layout);
 		verticalScroll.addView(horizontalScroll);
@@ -138,7 +137,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		submitButton.setTextColor(Color.rgb(60, 60, 60));
 		submitButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View arg0) {
-				//check if correct
 				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
 				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
 				startActivity(i);
@@ -151,20 +149,13 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		//Create the non-gui stuff
 		rowgroup = new RowGroup();
-		rowgroup.getRows().get(0).add(new Tile(Tile.PLUS, true));
-		rowgroup.getRows().add(new Row(1));
-		rowgroup.getRows().get(1).add(new Tile(Tile.PLUS, true));
-		rowgroup.getRows().get(1).add(new Tile(Tile.PLUS, true));
-		
-		tileLayout.add(0, 0, Tile.ONE, true);
     }
     
-    public void onClick(View v) {
+	public void onClick(View v) {
     	sPressed = (Button)v;
     	String pos = sPressed.getHint().toString();
     	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
     	sCol = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
-    	Log.d("a-t", sRow + " " + sCol + " " + rowgroup.getRows().size() + " " + rowgroup.getRows().get(sRow).getTiles().size());
     	if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
     	{
     		this.showDialog(0);
@@ -183,18 +174,22 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			//CHECK RIGHT
 			if(p.row == in_row && p.col > in_col){
 				if(p.col < row.get(p.row).getChildCount()){
-					button.add(getPlusButton(p.row,p.col));
+					button.add(getButton(p.row,p.col));
 					row.get(p.row).removeViewAt(p.col);
 					row.get(p.row).addView(button.get(button.size()-1),p.col);
 				}else{
-					button.add(getPlusButton(p.row,p.col));
+					button.add(getButton(p.row,p.col));
 					row.get(p.row).addView(button.get(button.size()-1));
 				}
+				//Update helper text at top
+				topButtons.add(getDisplayButton());
+				topRow.addView(topButtons.getLast());
+				updateTopDisplayText();
 			}
 			
 			//CHECK LEFT
 			if(p.row == in_row && p.col < in_col){
-				button.add(getPlusButton(p.row,p.col));	
+				button.add(getButton(p.row,p.col));	
 				row.get(p.row).removeViewAt(p.col);
 				row.get(p.row).addView(button.get(button.size()-1),p.col);		
 			}
@@ -208,7 +203,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					row.get(row.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 					for(int i = 0; i <= p.col; i++){					
 						if(templateRow.getTiles().get(i).getType() == Tile.PLUS){	
-							button.add(getPlusButton(p.row,p.col));	
+							button.add(getButton(p.row,p.col));	
 							row.get(p.row).addView(button.get(button.size()-1));
 						}else{
 							//If it's an empty block, add a place holding view
@@ -226,7 +221,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 						}
 					}
 						
-					button.add(getPlusButton(p.row,p.col));	
+					button.add(getButton(p.row,p.col));	
 
 					if(row.get(p.row).getChildCount() > p.col){
 						if(!(row.get(p.row).getChildAt(p.col) instanceof Button)){
@@ -246,10 +241,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 						View view = new View(this);
 						row.get(p.row).addView(view);
 					}						
-					button.add(getPlusButton(p.row,p.col));	
+					button.add(getButton(p.row,p.col));	
 					row.get(p.row).addView(button.get(button.size()-1));					
 				}else{
-					button.add(getPlusButton(p.row,p.col));
+					button.add(getButton(p.row,p.col));
 					row.get(p.row).removeViewAt(p.col);
 					row.get(p.row).addView(button.get(button.size()-1),p.col);		
 				}
@@ -261,7 +256,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			table.invalidate();
 	}
 	
-	private Button getPlusButton(int r, int c){
+	private Button getButton(int r, int c){
 		Button b = new Button(this);
 		b.setText("+");
 		b.setPadding(10, 10,10, 10);
@@ -279,11 +274,15 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		return b;
 	}
 	
-	private Button getEmptyButton(int r, int c){
-		Button b = new Button(this);
-		b.setPadding(10, 10,10, 10);	
+
+    private Button getDisplayButton() {
+    	Button b = new Button(this);
+		b.setText(" ");
+		b.setPadding(10, 10,10, 10);
+		b.setTextSize(18);
+		b.setTypeface(null,Typeface.BOLD);
 		b.setBackgroundColor(Color.rgb(60, 60, 60));		
-		b.setId(button.size());
+		b.setGravity(Gravity.CENTER);
 		TableRow.LayoutParams bparams = new TableRow.LayoutParams(SIZE,LayoutParams.FILL_PARENT);
 		bparams.setMargins(5, 5, 5, 5);		
 		b.setLayoutParams(bparams);
@@ -291,6 +290,25 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		return b;
 	}
 	
+    private void updateTopDisplayText(){
+    	//Top dislpay
+    	for(int i=0;i<topButtons.size();i++){
+    		if(i != topButtons.size()-1){
+    			topButtons.get(i).setBackgroundColor(Color.rgb(100, 100, 100));	
+    			String text = "";
+    			
+    			if(!rowgroup.getRows().get(0).getTiles().get(i).isPositive())
+    				text+="-";
+    			
+	    		if(rowgroup.getRows().get(0).getTiles().get(i).getType()==Tile.X_SQUARED)
+	    			text+="X";
+	    		else
+	    			text+="1";
+	    			
+	    		topButtons.get(i).setText(text);
+    		}
+    	}
+    }
 	public final int SIZE = 60;
 	
 	public void setButton(int r, int c, Button b, int type){
