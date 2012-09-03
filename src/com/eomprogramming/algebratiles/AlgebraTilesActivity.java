@@ -33,7 +33,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private LinkedList<Button> button;
 	private LinkedList<TableRow> row;
 	private TileLayout tileLayout;
-	private TableLayout table;
+	private TableLayout table, leftTable;
 	private RowGroup rowgroup;
 	private ScrollView verticalScroll;
 	int sRow;
@@ -42,6 +42,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 	private TableRow topRow;
 	private LinkedList<Button> topButtons;
+	private LinkedList<TableRow> leftSideRows;
 	
 	final CharSequence[] items = {"X^2","-X^2", "X","-X", "1","-1"};
 	
@@ -80,6 +81,23 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		layout.setOrientation(LinearLayout.HORIZONTAL);
 		layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		
+		leftTable = new TableLayout(this);
+		leftTable.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		leftTable.setPadding(5, 10, 0, 5);
+		leftSideRows= new LinkedList<TableRow>();
+		
+		leftSideRows.add(new TableRow(this));
+		leftSideRows.get(0).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		leftSideRows.get(0).addView(getDisplayButton());		
+		leftTable.addView(leftSideRows.get(0));
+		
+		leftSideRows.add(new TableRow(this));
+		leftSideRows.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		leftSideRows.getLast().addView(getDisplayButton());
+		leftTable.addView(leftSideRows.getLast());
+		
+		layout.addView(leftTable);
+		
 		table = new TableLayout(this);
 		table.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 		
@@ -100,7 +118,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		table.addView(topRow);
 		table.addView(row.get(0));
 		
-		table.setPadding(10, 10, 10, 10);
+		table.setPadding(0, 10, 10, 10);
 		layout.addView(table);
 		horizontalScroll.addView(layout);
 		verticalScroll.addView(horizontalScroll);
@@ -196,28 +214,23 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				row.get(p.row).removeViewAt(p.col);
 				row.get(p.row).addView(button.get(button.size()-1),p.col);		
 			}
-			Log.d("a-t", "p.row: "+p.row+"p.col: "+p.col);
+			
 			//CHECK BOTTOM
 			if(p.row > in_row && p.col == in_col){
-				Log.d("a-t", "addding down...");
 				//Check if we have to add a row
 				if(p.row >= row.size()){
-					Log.d("a-t","Newww");
 					row.add(new TableRow(this));
 					row.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 					for(int i = 0; i <= p.col; i++){					
 						if(templateRow.getTiles().get(i).getType() == Tile.PLUS){	
-							Log.d("a-t", "++");
 							button.add(getButton(p.row,p.col));	
 							row.getLast().addView(button.getLast());
 						}else{
-							Log.d("a-t", "emptyyy");
 							//If it's an empty block, add a place holding view
 							row.getLast().addView(getDisplayButton());
 						}
 					}				
 					table.addView(row.getLast());
-					table.invalidate();
 					
 				}else{
 					while(row.get(p.row).getChildCount() < p.col){
@@ -229,13 +242,20 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					button.add(getButton(p.row,p.col));	
 
 					if(row.get(p.row).getChildCount() > p.col){
-						if(!(row.get(p.row).getChildAt(p.col) instanceof Button)){
+						if((row.get(p.row).getChildAt(p.col).getId() == View.NO_ID)){
 							row.get(p.row).removeViewAt(p.col);
 							row.get(p.row).addView(button.get(button.size()-1),p.col);
 						}
 					}else{
 						row.get(p.row).addView(button.get(button.size()-1));		
 					}
+				}
+				if(p.col==0){
+					leftSideRows.add(new TableRow(this));
+					leftSideRows.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+					leftSideRows.getLast().addView(getDisplayButton());
+					leftTable.addView(leftSideRows.getLast());
+					this.updateLeftDisplayText();
 				}
 			}
 			
@@ -296,7 +316,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	}
 	
     private void updateTopDisplayText(){
-    	//Top dislpay
     	for(int i=0;i<topButtons.size();i++){
     		if(i != topButtons.size()-1){
     			topButtons.get(i).setBackgroundColor(Color.rgb(100, 100, 100));	
@@ -314,6 +333,36 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     		}
     	}
     }
+    
+    private void updateLeftDisplayText(){
+    	for(int i=1;i<leftSideRows.size();i++){
+    		if(i != leftSideRows.size()-1){
+    			Button sideButton = (Button) leftSideRows.get(i).getChildAt(0);
+    			sideButton.setBackgroundColor(Color.rgb(100, 100, 100));	
+    			String text = "";
+    			TableRow.LayoutParams bparams;
+    			
+    			
+    			if(!rowgroup.getRows().get(i-1).getTiles().get(0).isPositive())
+    				text+="-";
+    			
+	    		if(rowgroup.getRows().get(i-1).getTiles().get(0).getType()==Tile.X_SQUARED){
+	    			text+="X";
+	    			bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
+		    		bparams.setMargins(5, 5, 5, 5);	
+		    		sideButton.setLayoutParams(bparams);	    			
+	    		}else{
+	    			text+="1";
+	    			bparams = new TableRow.LayoutParams(SIZE,SIZE);
+		    		bparams.setMargins(5, 5, 5, 5);	
+		    		sideButton.setLayoutParams(bparams);	    		    			
+	    		}
+	    		
+	    		sideButton.setText(text);
+    		}
+    	}
+    }
+    
 	public final int SIZE = 60;
 	
 	public void setButton(int r, int c, Button b, int type){
