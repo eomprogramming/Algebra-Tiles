@@ -1,7 +1,5 @@
 package com.eomprogramming.algebratiles.math;
 
-import android.util.Log;
-
 public class QEquationGenerator {
 	
 	public static final int MIN = -3;
@@ -12,7 +10,7 @@ public class QEquationGenerator {
 		qe.setLeftCoefficient(random(MIN,MAX,true));
 		qe.setRightCoefficient(random(MIN,MAX,true));
 		
-		qe.setS(random(MIN,MAX, false));
+		qe.setS(random(MIN,MAX, true));
 		qe.setR(random(MIN,MAX, false));
 		
 		qe.generateStandardForm();

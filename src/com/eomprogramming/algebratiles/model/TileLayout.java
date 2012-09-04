@@ -3,11 +3,14 @@ package com.eomprogramming.algebratiles.model;
 import java.util.ArrayList;
 
 public class TileLayout {
-	ArrayList<Integer> rowType; //1 or x
-	ArrayList<Boolean> rowSign; //positive or negative
+	public ArrayList<Integer> rowType; //1 or x
+	public ArrayList<Boolean> rowSign; //positive or negative
 	
-	ArrayList<Integer> colType; //1 or x
-	ArrayList<Boolean> colSign; //positive or negative
+	public ArrayList<Integer> colType; //1 or x
+	public ArrayList<Boolean> colSign; //positive or negative
+	
+	private int prevNumRows;
+	private int prevNumCols;
 	
 	public TileLayout()
 	{
@@ -15,6 +18,19 @@ public class TileLayout {
 		rowSign = new ArrayList<Boolean>();
 		colType = new ArrayList<Integer>();
 		colSign = new ArrayList<Boolean>();
+		
+		prevNumRows = 0;
+		prevNumCols = 0;
+	}
+	
+	public int getPrevNumRows()
+	{
+		return prevNumRows;
+	}
+	
+	public int getPrevNumCols()
+	{
+		return prevNumCols;
 	}
 	
 	public void add(int row, int col, int type, boolean isPositive)
@@ -56,13 +72,19 @@ public class TileLayout {
 	public void addRow(int row, int type)
 	{
 		if(row == rowType.size())
+		{
 			rowType.add(type);
+			prevNumRows = rowType.size()-1;
+		}
 	}
 	
 	public void addCol(int col, int type)
 	{
 		if(col == colType.size())
+		{
 			colType.add(type);
+			prevNumCols = colType.size()-1;
+		}
 	}
 	
 	public boolean isValid(int row, int col, int type, boolean isPositive)
