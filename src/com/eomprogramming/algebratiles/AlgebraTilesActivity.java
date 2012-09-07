@@ -32,7 +32,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 
 	private LinkedList<Button> button;
 	private LinkedList<TableRow> row;
-	private TileLayout tileLayout;
+	private GameState tileLayout;
 	private TableLayout table, leftTable;
 	private RowGroup rowgroup;
 	private ScrollView verticalScroll;
@@ -124,7 +124,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		verticalScroll.addView(horizontalScroll);
 		main_layout.addView(verticalScroll);
 		
-		tileLayout = new TileLayout();
+		tileLayout = new GameState();
 					
 		setContentView(main_layout);
 		
@@ -320,10 +320,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     		topButtons.get(i).setBackgroundColor(Color.rgb(100, 100, 100));	
 			String text = "";
 			
-			if(!tileLayout.colSign.get(i))
+			if(!tileLayout.getColSign().get(i))
 				text+="-";
 			
-    		if(tileLayout.colType.get(i)==Tile.X)
+    		if(tileLayout.getColType().get(i)==Tile.X)
     			text+="X";
     		else
     			text+="1";
@@ -337,10 +337,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			String text = "";
 			TableRow.LayoutParams bparams;
 			
-			if(!tileLayout.rowSign.get(i))
+			if(!tileLayout.getRowSign().get(i))
 				text+="-";
 			
-    		if(tileLayout.rowType.get(i)==Tile.X){
+    		if(tileLayout.getRowType().get(i)==Tile.X){
     			text+="X";
     			bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
 	    		bparams.setMargins(5, 5, 5, 5);	

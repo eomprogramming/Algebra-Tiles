@@ -33,6 +33,26 @@ public class TileLayout {
 		isLeftPositive = EMPTY; //if the left row contains positive x tiles
 	}
 	
+	public ArrayList<Boolean> getRowSign()
+	{
+		return rowSign;
+	}
+	
+	public ArrayList<Boolean> getColSign()
+	{
+		return colSign;
+	}
+	
+	public ArrayList<Integer> getRowType()
+	{
+		return rowType;
+	}
+	
+	public ArrayList<Integer> getColType()
+	{
+		return colType;
+	}
+	
 	public int getPrevNumRows()
 	{
 		return prevNumRows;
@@ -179,5 +199,23 @@ public class TileLayout {
 		if(col < colType.size())
 			return colType.get(col) == Tile.X;
 		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public TileLayout clone()
+	{
+		TileLayout t = new TileLayout();
+		t.rowType = (ArrayList<Integer>) rowType.clone();
+		t.rowSign = (ArrayList<Boolean>) rowSign.clone();
+		t.colType = (ArrayList<Integer>) colType.clone();
+		t.colSign = (ArrayList<Boolean>) colSign.clone();
+		
+		t.prevNumRows = prevNumRows;
+		t.prevNumCols = prevNumCols;
+		
+		t.isTopPositive = isTopPositive;
+		t.isLeftPositive = isLeftPositive;
+		
+		return t;
 	}
 }
