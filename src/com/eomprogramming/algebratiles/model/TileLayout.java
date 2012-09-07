@@ -9,8 +9,15 @@ public class TileLayout {
 	public ArrayList<Integer> colType; //1 or x
 	public ArrayList<Boolean> colSign; //positive or negative
 	
+	public int isTopPositive; //if the top row contains positive x tiles
+	public int isLeftPositive; //if the left row contains positive x tiles
+	
 	private int prevNumRows;
 	private int prevNumCols;
+	
+	public static int POSITIVE = 1;
+	public static int NEGATIVE = 0;
+	public static int EMPTY = -1;
 	
 	public TileLayout()
 	{
@@ -21,6 +28,9 @@ public class TileLayout {
 		
 		prevNumRows = 0;
 		prevNumCols = 0;
+		
+		isTopPositive = EMPTY; //if the top row contains positive x tiles
+		isLeftPositive = EMPTY; //if the left row contains positive x tiles
 	}
 	
 	public int getPrevNumRows()
@@ -39,11 +49,25 @@ public class TileLayout {
 		{
 			if(isHorizontal(row, col))
 			{
+				if(row == rowType.size() && isLeftPositive == EMPTY)
+				{
+					if(isPositive)
+						isLeftPositive = POSITIVE;
+					else
+						isLeftPositive = NEGATIVE;
+				}
 				addRow(row, Tile.ONE);
 				addCol(col, Tile.X);
 			}
 			else
 			{
+				if(col == colType.size() && isTopPositive == EMPTY)
+				{
+					if(isPositive)
+						isTopPositive = POSITIVE;
+					else
+						isTopPositive = NEGATIVE;
+				}
 				addRow(row, Tile.X);
 				addCol(col, Tile.ONE);
 			}
@@ -89,6 +113,25 @@ public class TileLayout {
 	
 	public boolean isValid(int row, int col, int type, boolean isPositive)
 	{
+		if(type == Tile.X)
+		{
+			if(isHorizontal(row, col))
+			{
+				if(!(isLeftPositive == EMPTY))
+				{
+					if(isLeftPositive == POSITIVE ^ isPositive)
+						return false;
+				}
+			}
+			else
+			{
+				if(!(isTopPositive == EMPTY))
+				{
+					if(isTopPositive == POSITIVE ^ isPositive)
+						return false;
+				}
+			}
+		}
 		if(row < rowType.size() && col < colType.size())
 		{
 			if(rowSign.get(row) ^ colSign.get(col) ^ !isPositive)

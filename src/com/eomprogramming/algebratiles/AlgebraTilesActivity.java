@@ -128,25 +128,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					
 		setContentView(main_layout);
 		
-		Button clearButton = new Button(this);
-		clearButton.setText("Restart");
-		clearButton.setPadding(10, 10,10, 10);
-		clearButton.setTextSize(18);
-		clearButton.setTypeface(null,Typeface.BOLD);
-		clearButton.setBackgroundColor(Color.rgb(230, 230, 230));
-		clearButton.setTextColor(Color.rgb(60, 60, 60));
-		clearButton.setOnClickListener(new OnClickListener(){
-			public void onClick(View arg0) {
-				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
-				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
-				startActivity(i);
-				overridePendingTransition(0, 0);
-			}			
-		});	
-		clearButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
-		
-		main_layout.addView(clearButton);
-		
 		Button submitButton = new Button(this);
 		submitButton.setText("Submit");
 		submitButton.setPadding(10, 10,10, 10);
@@ -165,6 +146,25 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		submitButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
 		
 		main_layout.addView(submitButton);
+		
+		Button clearButton = new Button(this);
+		clearButton.setText("Restart");
+		clearButton.setPadding(10, 10,10, 10);
+		clearButton.setTextSize(18);
+		clearButton.setTypeface(null,Typeface.BOLD);
+		clearButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		clearButton.setTextColor(Color.rgb(60, 60, 60));
+		clearButton.setOnClickListener(new OnClickListener(){
+			public void onClick(View arg0) {
+				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+				startActivity(i);
+				overridePendingTransition(0, 0);
+			}			
+		});	
+		clearButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		
+		main_layout.addView(clearButton);
 		
 		//Create the non-gui stuff
 		rowgroup = new RowGroup();
