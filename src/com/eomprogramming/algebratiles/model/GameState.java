@@ -49,20 +49,6 @@ public class GameState {
 		states.add(t);
 	}
 	
-	public void addRow(int row, int type)
-	{
-		TileLayout t = states.peekLast().clone();
-		t.addRow(row, type);
-		states.add(t);
-	}
-	
-	public void addCol(int col, int type)
-	{
-		TileLayout t = states.peekLast().clone();
-		t.addCol(col, type);
-		states.add(t);
-	}
-	
 	public boolean isValid(int row, int col, int type, boolean isPositive)
 	{
 		return states.peekLast().isValid(row, col, type, isPositive);
