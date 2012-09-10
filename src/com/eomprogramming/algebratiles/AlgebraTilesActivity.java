@@ -35,16 +35,17 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private GameState tileLayout;
 	private TableLayout table, leftTable;
 	private RowGroup rowgroup;
-	private ScrollView verticalScroll;
-	int sRow;
-	int sCol;
-	Button sPressed;
+	private int sRow;
+	private int sCol;
+	private Button sPressed;
 	
 	private TableRow topRow;
 	private LinkedList<Button> topButtons;
 	private LinkedList<TableRow> leftSideRows;
 	
-	final CharSequence[] items = {"X^2","-X^2", "X","-X", "1","-1"};
+	private final int SUBMIT = -1, CLEAR = -2, UNDO = -3; //button IDs; they are negative for a reason, keep them that way
+	
+	private final CharSequence[] items = {"X^2","-X^2", "X","-X", "1","-1"};
 	
     /** Called when the activity is first created. */
     @Override
@@ -68,7 +69,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		equationText.setPadding(0, 15, 0, 15);
 		main_layout.addView(equationText);
 		
-		verticalScroll = new ScrollView(this);
+		ScrollView verticalScroll = new ScrollView(this);
 
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
 		params.weight = 1.0f;
@@ -128,61 +129,81 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					
 		setContentView(main_layout);
 		
+		LinearLayout buttongroup_layout = new LinearLayout(this);
+		buttongroup_layout.setBackgroundColor(Color.rgb(230, 230, 230));
+		buttongroup_layout.setOrientation(LinearLayout.HORIZONTAL);
+		buttongroup_layout.setGravity(Gravity.CENTER);
+		buttongroup_layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+				
 		Button submitButton = new Button(this);
 		submitButton.setText("Submit");
-		submitButton.setPadding(10, 10,10, 10);
-		submitButton.setTextSize(18);
+		submitButton.setPadding(10, 0,10, 10);
 		submitButton.setTypeface(null,Typeface.BOLD);
 		submitButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		submitButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.submit, 0, 0);
 		submitButton.setTextColor(Color.rgb(60, 60, 60));
-		submitButton.setOnClickListener(new OnClickListener(){
-			public void onClick(View arg0) {
-				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
-				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
-				startActivity(i);
-				overridePendingTransition(0, 0);
-			}			
-		});	
-		submitButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		submitButton.setOnClickListener(this);	
+		submitButton.setId(SUBMIT);
+		submitButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 		
-		main_layout.addView(submitButton);
+		buttongroup_layout.addView(submitButton);
 		
 		Button clearButton = new Button(this);
 		clearButton.setText("Restart");
-		clearButton.setPadding(10, 10,10, 10);
-		clearButton.setTextSize(18);
+		clearButton.setPadding(10, 0,10, 10);
 		clearButton.setTypeface(null,Typeface.BOLD);
 		clearButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		clearButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.restart, 0, 0);
 		clearButton.setTextColor(Color.rgb(60, 60, 60));
-		clearButton.setOnClickListener(new OnClickListener(){
-			public void onClick(View arg0) {
-				Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
-				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
-				startActivity(i);
-				overridePendingTransition(0, 0);
-			}			
-		});	
-		clearButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		clearButton.setOnClickListener(this);
+		clearButton.setId(CLEAR);
+		clearButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 		
-		main_layout.addView(clearButton);
+		buttongroup_layout.addView(clearButton);
+		
+		Button undoButton = new Button(this);
+		undoButton.setText("Undo");
+		undoButton.setPadding(10, 0,10, 10);
+		undoButton.setTypeface(null,Typeface.BOLD);
+		undoButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		undoButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.undo, 0, 0);
+		undoButton.setTextColor(Color.rgb(60, 60, 60));
+		undoButton.setOnClickListener(this);
+		undoButton.setId(UNDO);
+		undoButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		
+		buttongroup_layout.addView(undoButton);
+		
+		main_layout.addView(buttongroup_layout);
 		
 		//Create the non-gui stuff
 		rowgroup = new RowGroup();
     }
     
 	public void onClick(View v) {
-    	sPressed = (Button)v;
-    	String pos = sPressed.getHint().toString();
-    	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
-    	sCol = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
-    	if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
-    	{
-    		this.showDialog(0);
-    	}
-    	else if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() != Tile.EMPTY)
-    	{
-    		//remove button
-    	}
+		if(v.getId() >= 0){
+	    	sPressed = (Button)v;
+	    	String pos = sPressed.getHint().toString();
+	    	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
+	    	sCol = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
+	    	if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
+	    	{
+	    		this.showDialog(0);
+	    	}
+	    	else if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() != Tile.EMPTY)
+	    	{
+	    		//remove button
+	    	}
+		}else if(v.getId() == SUBMIT){
+			Toast.makeText(this, "Feature not available yet", Toast.LENGTH_SHORT).show();
+		}else if(v.getId() == CLEAR){
+			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
+			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+			startActivity(i);
+			overridePendingTransition(0, 0);
+		}else if(v.getId() == UNDO){
+			Toast.makeText(this, "Feature not available yet", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	private void updateButtons(LinkedList<Pos> pos, int in_row, int in_col) {
@@ -404,7 +425,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					updateButtons(rowgroup.updatePlusTiles(sRow, sCol),sRow,sCol);
 					setButton(sRow, sCol, sPressed, type);					
 		    	}else{
-		    		Toast.makeText(getApplicationContext(), "Can't place selected tile.", Toast.LENGTH_SHORT).show();
+		    		Toast.makeText(getApplicationContext(), "Can't place selected tile.", Toast.LENGTH_LONG).show();
 		    	}
 		    }
 		});
