@@ -16,6 +16,12 @@ public class Tile {
 	private int type;
 	private boolean positive;
 	
+	public Tile()
+	{
+		type = -1;
+		positive = true;
+	}
+	
 	public Tile(int type, boolean isPositive){
 		setPositive(isPositive);
 		setType(type);
@@ -73,6 +79,9 @@ public class Tile {
 	
 	public Tile clone()
 	{
-		return new Tile(type, positive);
+		Tile t = new Tile();
+		t.setPositive(positive);
+		t.setType(type);
+		return t;
 	}
 }

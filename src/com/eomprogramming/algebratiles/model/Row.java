@@ -36,8 +36,18 @@ public class Row {
 		return tiles;
 	}
 	
+	public Tile get(int i)
+	{
+		return tiles.get(i);
+	}
+	
 	public Row clone()
 	{
-		return new Row(position, tiles);
+		Row r = new Row(position);
+		ArrayList<Tile> t = new ArrayList<Tile>();
+		for(Tile a: tiles)
+			t.add(a.clone());
+		r.tiles = t;
+		return r;
 	}
 }

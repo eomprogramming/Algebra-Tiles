@@ -86,11 +86,13 @@ public class RowGroup {
 		return rows;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public RowGroup clone()
 	{
 		RowGroup r = new RowGroup();
-		r.rows = (ArrayList<Row>) rows.clone();
+		ArrayList<Row> a = new ArrayList<Row>();
+		for(Row b: rows)
+			a.add(b.clone());
+		r.rows = a;
 		return r;
 	}
 	

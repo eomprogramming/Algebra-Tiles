@@ -43,6 +43,17 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private ArrayList<Button> topButtons;
 	private ArrayList<TableRow> leftSideRows;
 	
+	private LinearLayout main_layout;
+	private TextView equationText;
+	private ScrollView verticalScroll;
+	private LinearLayout.LayoutParams params;
+	private HorizontalScrollView horizontalScroll;
+	private LinearLayout layout;
+	private LinearLayout buttongroup_layout;
+	private Button submitButton;
+	private Button clearButton;
+	private Button undoButton;
+	
 	private final int SUBMIT = -1, CLEAR = -2, UNDO = -3; //button IDs; they are negative for a reason, keep them that way
 	
 	private final CharSequence[] items = {"X^2","-X^2", "X","-X", "1","-1"};
@@ -54,11 +65,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
          		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
-		LinearLayout main_layout = new LinearLayout(this);
+		main_layout = new LinearLayout(this);
 		main_layout.setOrientation(LinearLayout.VERTICAL);
 		main_layout.setBackgroundColor(Color.rgb(60, 60, 60));
 		
-		TextView equationText = new TextView(this);
+		equationText = new TextView(this);
 		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
 		equationText.setText(QEquationGenerator.generateRandom().toString());
 		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
@@ -69,16 +80,16 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		equationText.setPadding(0, 15, 0, 15);
 		main_layout.addView(equationText);
 		
-		ScrollView verticalScroll = new ScrollView(this);
+		verticalScroll = new ScrollView(this);
 
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+		params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
 		params.weight = 1.0f;
 		verticalScroll.setLayoutParams(params);
 		
-		HorizontalScrollView horizontalScroll = new HorizontalScrollView(this);
+		horizontalScroll = new HorizontalScrollView(this);
 		horizontalScroll.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		
-		LinearLayout layout = new LinearLayout(this);
+		layout = new LinearLayout(this);
 		layout.setOrientation(LinearLayout.HORIZONTAL);
 		layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		
@@ -127,13 +138,13 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					
 		setContentView(main_layout);
 		
-		LinearLayout buttongroup_layout = new LinearLayout(this);
+		buttongroup_layout = new LinearLayout(this);
 		buttongroup_layout.setBackgroundColor(Color.rgb(230, 230, 230));
 		buttongroup_layout.setOrientation(LinearLayout.HORIZONTAL);
 		buttongroup_layout.setGravity(Gravity.CENTER);
 		buttongroup_layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
 				
-		Button submitButton = new Button(this);
+		submitButton = new Button(this);
 		submitButton.setText("Submit");
 		submitButton.setPadding(10, 0,10, 10);
 		submitButton.setTypeface(null,Typeface.BOLD);
@@ -146,7 +157,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		buttongroup_layout.addView(submitButton);
 		
-		Button clearButton = new Button(this);
+		clearButton = new Button(this);
 		clearButton.setText("Restart");
 		clearButton.setPadding(10, 0,10, 10);
 		clearButton.setTypeface(null,Typeface.BOLD);
@@ -159,7 +170,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		buttongroup_layout.addView(clearButton);
 		
-		Button undoButton = new Button(this);
+		undoButton = new Button(this);
 		undoButton.setText("Undo");
 		undoButton.setPadding(10, 0,10, 10);
 		undoButton.setTypeface(null,Typeface.BOLD);
@@ -175,12 +186,12 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		main_layout.addView(buttongroup_layout);
 		
 		gameState = new GameState();
-		
+		/*
 		//Check if it's coming from an undo
         if(getIntent().getBooleanExtra("isUndo", false)){
 		      setGameState(GameState.saved);
 		      applyGameState();
-       }
+       }*/
     }
     
 	public void onClick(View v) {
@@ -211,13 +222,14 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			overridePendingTransition(0, 0);
 			
 		}else if(v.getId() == UNDO){
-			gameState.undo();
+			/*gameState.undo();
 			GameState.saved = gameState;
 			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());				
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
 			i.putExtra("isUndo", true);
 			startActivity(i);
-			overridePendingTransition(0, 0);
+			overridePendingTransition(0, 0);*/
+			undo();
 			
 		}
 	}
@@ -436,9 +448,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		    	{
 		    		gameState.add(sRow, sCol, type, isPositive);
 		    		gameState.addTile(sRow, sCol, new Tile(type, isPositive));
+		    		
 					button.get(sPressed.getId()).setText(Tile.getSymbol(type));
 					updateButtons(gameState.updatePlusTiles(sRow, sCol),sRow,sCol);
-					setButton(sRow, sCol, sPressed, type);					
+					setButton(sRow, sCol, sPressed, type);
+					Log.d("^.^", sRow + " " + sCol + " " + sPressed.getId());
 		    	}else{
 		    		Toast.makeText(getApplicationContext(), "Can't place selected tile.", Toast.LENGTH_LONG).show();
 		    	}
@@ -446,6 +460,150 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		});
 		AlertDialog alert = builder.create();
 		return alert;
+	}
+	
+	public void undo()
+	{
+		gameState.undo();
+		ArrayList<Row> rows = gameState.getRows();
+		main_layout = new LinearLayout(this);
+		main_layout.setOrientation(LinearLayout.VERTICAL);
+		main_layout.setBackgroundColor(Color.rgb(60, 60, 60));
+		
+		equationText = new TextView(this);
+		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		equationText.setText(QEquationGenerator.generateRandom().toString());
+		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
+		equationText.setTextColor(Color.rgb(60, 60, 60));
+		equationText.setGravity(Gravity.CENTER);
+		equationText.setTypeface(null,Typeface.BOLD);
+		equationText.setTextSize(28);
+		equationText.setPadding(0, 15, 0, 15);
+		main_layout.addView(equationText);
+		
+		verticalScroll = new ScrollView(this);
+
+		params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+		params.weight = 1.0f;
+		verticalScroll.setLayoutParams(params);
+		
+		horizontalScroll = new HorizontalScrollView(this);
+		horizontalScroll.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
+		
+		layout = new LinearLayout(this);
+		layout.setOrientation(LinearLayout.HORIZONTAL);
+		layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
+		
+		leftTable = new TableLayout(this);
+		leftTable.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		leftTable.setPadding(5, 10, 0, 5);
+		leftSideRows= new ArrayList<TableRow>();
+		
+		leftSideRows.add(new TableRow(this));
+		leftSideRows.get(0).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		leftSideRows.get(0).addView(getDisplayButton());		
+		leftTable.addView(leftSideRows.get(0));
+		
+		leftSideRows.add(new TableRow(this));
+		leftSideRows.get(leftSideRows.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		leftSideRows.get(leftSideRows.size()-1).addView(getDisplayButton());
+		leftTable.addView(leftSideRows.get(leftSideRows.size()-1));
+		
+		layout.addView(leftTable);
+		
+		table = new TableLayout(this);
+		table.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		
+		button = new ArrayList<Button>();
+		row = new ArrayList<TableRow>();
+								
+		row.add(new TableRow(this));
+		row.get(0).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		button.add(getButton(0,0));		
+		row.get(0).addView(button.get(0));
+	
+		topRow = new TableRow(this);
+		topRow.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		topButtons = new ArrayList<Button>();
+		topButtons.add(getDisplayButton());
+		topRow.addView(topButtons.get(0));
+		
+		table.addView(topRow);
+		table.addView(row.get(0));
+		
+		table.setPadding(0, 10, 10, 10);
+		layout.addView(table);
+		horizontalScroll.addView(layout);
+		verticalScroll.addView(horizontalScroll);
+		main_layout.addView(verticalScroll);
+					
+		setContentView(main_layout);
+		
+		buttongroup_layout = new LinearLayout(this);
+		buttongroup_layout.setBackgroundColor(Color.rgb(230, 230, 230));
+		buttongroup_layout.setOrientation(LinearLayout.HORIZONTAL);
+		buttongroup_layout.setGravity(Gravity.CENTER);
+		buttongroup_layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+				
+		submitButton = new Button(this);
+		submitButton.setText("Submit");
+		submitButton.setPadding(10, 0,10, 10);
+		submitButton.setTypeface(null,Typeface.BOLD);
+		submitButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		submitButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.submit, 0, 0);
+		submitButton.setTextColor(Color.rgb(60, 60, 60));
+		submitButton.setOnClickListener(this);	
+		submitButton.setId(SUBMIT);
+		submitButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		
+		buttongroup_layout.addView(submitButton);
+		
+		clearButton = new Button(this);
+		clearButton.setText("Restart");
+		clearButton.setPadding(10, 0,10, 10);
+		clearButton.setTypeface(null,Typeface.BOLD);
+		clearButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		clearButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.restart, 0, 0);
+		clearButton.setTextColor(Color.rgb(60, 60, 60));
+		clearButton.setOnClickListener(this);
+		clearButton.setId(CLEAR);
+		clearButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		
+		buttongroup_layout.addView(clearButton);
+		
+		undoButton = new Button(this);
+		undoButton.setText("Undo");
+		undoButton.setPadding(10, 0,10, 10);
+		undoButton.setTypeface(null,Typeface.BOLD);
+		undoButton.setBackgroundColor(Color.rgb(230, 230, 230));
+		undoButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.undo, 0, 0);
+		undoButton.setTextColor(Color.rgb(60, 60, 60));
+		undoButton.setOnClickListener(this);
+		undoButton.setId(UNDO);
+		undoButton.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		
+		buttongroup_layout.addView(undoButton);
+		
+		main_layout.addView(buttongroup_layout);
+		
+		gameState = new GameState();
+		int id = 0;
+		for(int i = 0; i < rows.size(); i++)
+		{
+			Row r = rows.get(i);
+			ArrayList<Tile> tiles = r.getTiles();
+			for(int j = 0; j < tiles.size(); j++)
+			{
+				Tile t = tiles.get(j);
+				if(t.getType() == Tile.PLUS)
+					continue;
+				gameState.add(i, j, t.getType(), t.isPositive());
+	    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
+				button.get(id).setText(Tile.getSymbol(t.getType()));
+				updateButtons(gameState.updatePlusTiles(i, j),i,j);
+				setButton(i, j, button.get(id++), t.getType());	
+			}
+		}
 	}
 	
 	public void setGameState(GameState gs){
