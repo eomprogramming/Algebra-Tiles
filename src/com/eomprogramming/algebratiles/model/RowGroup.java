@@ -11,8 +11,9 @@ public class RowGroup {
 	public RowGroup(){
 		rows = new ArrayList<Row>();
 		Row firstRow = new Row(0);
-		firstRow.add(new Tile(Tile.PLUS,true));
+		firstRow.add(new Tile(Tile.PLUS, true));
 		rows.add(firstRow);
+		print();
 	}
 	
 	public boolean addTile(int row, int col, Tile t){
@@ -77,7 +78,7 @@ public class RowGroup {
 				positions.add(new Pos(row-1, col));
 			}
 		}
-		//print();			
+		print();			
 		return positions;		
 	}
 	
