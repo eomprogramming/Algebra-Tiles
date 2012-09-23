@@ -1,14 +1,15 @@
 package com.eomprogramming.algebratiles.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import android.util.Log;
 
 public class RowGroup {
-	private LinkedList<Row> rows;
+	private ArrayList<Row> rows;
 	
 	public RowGroup(){
-		rows = new LinkedList<Row>();
+		rows = new ArrayList<Row>();
 		Row firstRow = new Row(0);
 		firstRow.add(new Tile(Tile.PLUS, true));
 		rows.add(firstRow);
@@ -81,7 +82,7 @@ public class RowGroup {
 		return positions;		
 	}
 	
-	public LinkedList<Row> getRows(){
+	public ArrayList<Row> getRows(){
 		return rows;
 	}
 	
@@ -89,7 +90,7 @@ public class RowGroup {
 	public RowGroup clone()
 	{
 		RowGroup r = new RowGroup();
-		r.rows = (LinkedList<Row>) rows.clone();
+		r.rows = (ArrayList<Row>) rows.clone();
 		return r;
 	}
 	
