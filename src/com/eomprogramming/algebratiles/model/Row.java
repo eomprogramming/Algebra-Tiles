@@ -1,21 +1,21 @@
 package com.eomprogramming.algebratiles.model;
 
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class Row {
 	
-	private LinkedList<Tile> tiles;
+	private ArrayList<Tile> tiles;
 	private int position;
 	
 	public Row(int pos){
-		tiles = new LinkedList<Tile>();
+		tiles = new ArrayList<Tile>();
 		setPosition(pos);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Row(int pos, LinkedList<Tile> tiles){
-		this.tiles = (LinkedList<Tile>) tiles.clone();
+	public Row(int pos, ArrayList<Tile> tiles){
+		this.tiles = (ArrayList<Tile>) tiles.clone();
 		setPosition(pos);
 	}
 	
@@ -32,7 +32,7 @@ public class Row {
 		position = p;
 	}	
 	
-	public LinkedList<Tile> getTiles(){
+	public ArrayList<Tile> getTiles(){
 		return tiles;
 	}
 	

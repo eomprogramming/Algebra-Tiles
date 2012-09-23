@@ -1,5 +1,6 @@
 package com.eomprogramming.algebratiles;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.eomprogramming.algebratiles.math.QEquationGenerator;
@@ -30,8 +31,8 @@ import android.widget.Toast;
 
 public class AlgebraTilesActivity extends Activity implements OnClickListener {
 
-	private LinkedList<Button> button;
-	private LinkedList<TableRow> row;
+	private ArrayList<Button> button;
+	private ArrayList<TableRow> row;
 	private GameState gameState;
 	private TableLayout table, leftTable;
 	private int sRow;
@@ -39,8 +40,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private Button sPressed;
 	
 	private TableRow topRow;
-	private LinkedList<Button> topButtons;
-	private LinkedList<TableRow> leftSideRows;
+	private ArrayList<Button> topButtons;
+	private ArrayList<TableRow> leftSideRows;
 	
 	private final int SUBMIT = -1, CLEAR = -2, UNDO = -3; //button IDs; they are negative for a reason, keep them that way
 	
@@ -84,7 +85,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		leftTable = new TableLayout(this);
 		leftTable.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 		leftTable.setPadding(5, 10, 0, 5);
-		leftSideRows= new LinkedList<TableRow>();
+		leftSideRows= new ArrayList<TableRow>();
 		
 		leftSideRows.add(new TableRow(this));
 		leftSideRows.get(0).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
@@ -92,17 +93,17 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		leftTable.addView(leftSideRows.get(0));
 		
 		leftSideRows.add(new TableRow(this));
-		leftSideRows.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-		leftSideRows.getLast().addView(getDisplayButton());
-		leftTable.addView(leftSideRows.getLast());
+		leftSideRows.get(leftSideRows.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		leftSideRows.get(leftSideRows.size()-1).addView(getDisplayButton());
+		leftTable.addView(leftSideRows.get(leftSideRows.size()-1));
 		
 		layout.addView(leftTable);
 		
 		table = new TableLayout(this);
 		table.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 		
-		button = new LinkedList<Button>();
-		row = new LinkedList<TableRow>();
+		button = new ArrayList<Button>();
+		row = new ArrayList<TableRow>();
 								
 		row.add(new TableRow(this));
 		row.get(0).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
@@ -111,7 +112,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 		topRow = new TableRow(this);
 		topRow.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-		topButtons = new LinkedList<Button>();
+		topButtons = new ArrayList<Button>();
 		topButtons.add(getDisplayButton());
 		topRow.addView(topButtons.get(0));
 		
@@ -221,7 +222,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				if(p.col == gameState.getPrevNumCols()+1){
 					//Update helper text at top
 					topButtons.add(getDisplayButton());
-					topRow.addView(topButtons.getLast());
+					topRow.addView(topButtons.get(topButtons.size()-1));
 					updateTopDisplayText(p.col-1);
 				}
 			}
@@ -238,17 +239,17 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				//Check if we have to add a row
 				if(p.row >= row.size()){
 					row.add(new TableRow(this));
-					row.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+					row.get(row.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 					for(int i = 0; i <= p.col; i++){					
 						if(templateRow.getTiles().get(i).getType() == Tile.PLUS){	
 							button.add(getButton(p.row,p.col));	
-							row.getLast().addView(button.getLast());
+							row.get(row.size()-1).addView(button.get(button.size()-1));
 						}else{
 							//If it's an empty block, add a place holding view
-							row.getLast().addView(getDisplayButton());
+							row.get(row.size()-1).addView(getDisplayButton());
 						}
 					}				
-					table.addView(row.getLast());
+					table.addView(row.get(row.size()-1));
 					
 				}else{
 					while(row.get(p.row).getChildCount() < p.col){
@@ -271,9 +272,9 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				if(p.row == gameState.getPrevNumRows()+1){
 					//update factors on the left
 					leftSideRows.add(new TableRow(this));
-					leftSideRows.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-					leftSideRows.getLast().addView(getDisplayButton());
-					leftTable.addView(leftSideRows.getLast());
+					leftSideRows.get(leftSideRows.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+					leftSideRows.get(leftSideRows.size()-1).addView(getDisplayButton());
+					leftTable.addView(leftSideRows.get(leftSideRows.size()-1));
 					this.updateLeftDisplayText(p.row-1);
 				}
 			}

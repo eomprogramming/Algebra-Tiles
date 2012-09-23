@@ -30,7 +30,7 @@ public class GameState {
 		return states2.peek().updatePlusTiles(row, col);		
 	}
 	
-	public LinkedList<Row> getRows(){
+	public ArrayList<Row> getRows(){
 		return states2.peek().getRows();
 	}
 	//end row group methods
