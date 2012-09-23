@@ -33,6 +33,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private LinkedList<Button> button;
 	private LinkedList<TableRow> row;
 	private GameState gameState;
+	private static GameState savedGameState;
 	private TableLayout table, leftTable;
 	private int sRow;
 	private int sCol;
@@ -174,11 +175,13 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		main_layout.addView(buttongroup_layout);
 		
 		//create non-GUI stuff
-		gameState = new GameState();
+		if(gameState == null)
+			gameState = new GameState();
     }
     
 	public void onClick(View v) {
 		if(v.getId() >= 0){
+			
 	    	sPressed = (Button)v;
 	    	String pos = sPressed.getHint().toString();
 	    	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
@@ -191,15 +194,27 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	    	{
 	    		//remove button
 	    	}
+	    	
 		}else if(v.getId() == SUBMIT){
+			
 			Toast.makeText(this, "Feature not available yet", Toast.LENGTH_SHORT).show();
+			
 		}else if(v.getId() == CLEAR){
+			
 			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
 			startActivity(i);
 			overridePendingTransition(0, 0);
+			
 		}else if(v.getId() == UNDO){
-			Toast.makeText(this, "Feature not available yet", Toast.LENGTH_SHORT).show();
+			
+			savedGameState = gameState;
+			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());				
+			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+			i.putExtra("isUndo", true);
+			startActivity(i);
+			overridePendingTransition(0, 0);
+			
 		}
 	}
 
@@ -318,7 +333,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		return b;
 	}
 	
-
     private Button getDisplayButton() {
     	Button b = new Button(this);
 		b.setText(" ");
@@ -430,4 +444,43 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		return alert;
 	}
 	
+	public void setGameState(GameState gs){
+		gameState = gs;
+	}
+	
+	/**
+	 * Should only ever be called at the start of an activity!
+	 */
+	public void applyGameState(){
+		//Clear what the constructor added
+		table.removeAllViews();
+		button.remove();
+		row.remove();
+		
+		//Go through all rows and add the tiles
+		for(Row templateRow : gameState.getRows()){
+			row.add(new TableRow(this));
+			table.addView(row.getLast());
+			for(Tile t : templateRow.getTiles()){
+				int i = 0;
+				if(t.getType() == Tile.EMPTY){
+					row.get(templateRow.getPosition()).addView(getDisplayButton());
+				}else{
+					button.add(getButton(templateRow.getPosition(),i));
+					row.get(templateRow.getPosition()).addView(button.getLast());
+					if(t.getType() != Tile.PLUS)
+						setButton(templateRow.getPosition(),i,button.getLast(),t.getType());
+				}
+				i++;
+			}			
+		}
+	}
+	
+	protected void onNewIntent(Intent intent) {
+		   super.onNewIntent(intent);
+		   if(intent.getBooleanExtra("isUndo", false)){
+		      setGameState(AlgebraTilesActivity.savedGameState);
+		      applyGameState();
+		   }
+		}
 }

@@ -77,7 +77,7 @@ public class RowGroup {
 				positions.add(new Pos(row-1, col));
 			}
 		}
-		print();			
+		//print();			
 		return positions;		
 	}
 	
