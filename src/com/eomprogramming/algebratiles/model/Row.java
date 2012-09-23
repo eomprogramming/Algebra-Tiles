@@ -13,8 +13,9 @@ public class Row {
 		setPosition(pos);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Row(int pos, LinkedList<Tile> tiles){
-		this.tiles = tiles;
+		this.tiles = (LinkedList<Tile>) tiles.clone();
 		setPosition(pos);
 	}
 	
@@ -33,5 +34,10 @@ public class Row {
 	
 	public LinkedList<Tile> getTiles(){
 		return tiles;
+	}
+	
+	public Row clone()
+	{
+		return new Row(position, tiles);
 	}
 }
