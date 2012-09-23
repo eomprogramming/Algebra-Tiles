@@ -63,6 +63,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          		
+       GameState.q = QEquationGenerator.generateRandom();
+        
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
 		main_layout = new LinearLayout(this);
@@ -71,7 +73,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		equationText = new TextView(this);
 		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
-		equationText.setText(QEquationGenerator.generateRandom().toString());
+		equationText.setText(GameState.q.toString());
 		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
 		equationText.setTextColor(Color.rgb(60, 60, 60));
 		equationText.setGravity(Gravity.CENTER);
@@ -472,7 +474,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		equationText = new TextView(this);
 		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
-		equationText.setText(QEquationGenerator.generateRandom().toString());
+		equationText.setText(GameState.q.toString());
 		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
 		equationText.setTextColor(Color.rgb(60, 60, 60));
 		equationText.setGravity(Gravity.CENTER);
