@@ -32,9 +32,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 
 	private LinkedList<Button> button;
 	private LinkedList<TableRow> row;
-	private GameState tileLayout;
+	private GameState gameState;
 	private TableLayout table, leftTable;
-	private RowGroup rowgroup;
 	private int sRow;
 	private int sCol;
 	private Button sPressed;
@@ -124,8 +123,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		horizontalScroll.addView(layout);
 		verticalScroll.addView(horizontalScroll);
 		main_layout.addView(verticalScroll);
-		
-		tileLayout = new GameState();
 					
 		setContentView(main_layout);
 		
@@ -176,8 +173,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		main_layout.addView(buttongroup_layout);
 		
-		//Create the non-gui stuff
-		rowgroup = new RowGroup();
+		//create non-GUI stuff
+		gameState = new GameState();
     }
     
 	public void onClick(View v) {
@@ -186,11 +183,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	    	String pos = sPressed.getHint().toString();
 	    	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
 	    	sCol = Integer.parseInt(pos.substring(pos.indexOf(",")+1, pos.length()));
-	    	if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
+	    	if(gameState.getRows().get(sRow).getTiles().get(sCol).getType() == Tile.PLUS)
 	    	{
 	    		this.showDialog(0);
 	    	}
-	    	else if(rowgroup.getRows().get(sRow).getTiles().get(sCol).getType() != Tile.EMPTY)
+	    	else if(gameState.getRows().get(sRow).getTiles().get(sCol).getType() != Tile.EMPTY)
 	    	{
 	    		//remove button
 	    	}
@@ -209,7 +206,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private void updateButtons(LinkedList<Pos> pos, int in_row, int in_col) {
 		for(Pos p : pos){
 			
-			Row templateRow = rowgroup.getRows().get(p.row);
+			Row templateRow = gameState.getRows().get(p.row);
 			
 			//CHECK RIGHT
 			if(p.row == in_row && p.col > in_col){
@@ -221,7 +218,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					button.add(getButton(p.row,p.col));
 					row.get(p.row).addView(button.get(button.size()-1));
 				}
-				if(p.col == tileLayout.getPrevNumCols()+1){
+				if(p.col == gameState.getPrevNumCols()+1){
 					//Update helper text at top
 					topButtons.add(getDisplayButton());
 					topRow.addView(topButtons.getLast());
@@ -271,7 +268,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 						row.get(p.row).addView(button.get(button.size()-1));		
 					}
 				}
-				if(p.row == tileLayout.getPrevNumRows()+1){
+				if(p.row == gameState.getPrevNumRows()+1){
 					//update factors on the left
 					leftSideRows.add(new TableRow(this));
 					leftSideRows.getLast().setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
@@ -341,10 +338,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     		topButtons.get(i).setBackgroundColor(Color.rgb(100, 100, 100));	
 			String text = "";
 			
-			if(!tileLayout.getColSign().get(i))
+			if(!gameState.getColSign().get(i))
 				text+="-";
 			
-    		if(tileLayout.getColType().get(i)==Tile.X)
+    		if(gameState.getColType().get(i)==Tile.X)
     			text+="X";
     		else
     			text+="1";
@@ -358,10 +355,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			String text = "";
 			TableRow.LayoutParams bparams;
 			
-			if(!tileLayout.getRowSign().get(i))
+			if(!gameState.getRowSign().get(i))
 				text+="-";
 			
-    		if(tileLayout.getRowType().get(i)==Tile.X){
+    		if(gameState.getRowType().get(i)==Tile.X){
     			text+="X";
     			bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
 	    		bparams.setMargins(5, 5, 5, 5);	
@@ -380,7 +377,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 	public void setButton(int r, int c, Button b, int type){
 		TableRow.LayoutParams bparams;
-		if(rowgroup.getRows().get(r).getTiles().get(c).isPositive())
+		if(gameState.getRows().get(r).getTiles().get(c).isPositive())
 			b.setBackgroundColor(Color.rgb(237,28,36));
 		else
 			b.setBackgroundColor(Color.rgb(0,162,232));
@@ -392,7 +389,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				b.setLayoutParams(bparams);
 				break;
 			case Tile.X:
-				if(tileLayout.isHorizontal(r, c))
+				if(gameState.isHorizontal(r, c))
 					bparams = new TableRow.LayoutParams(SIZE*2,SIZE);
 				else
 					bparams = new TableRow.LayoutParams(SIZE,SIZE*2);
@@ -417,12 +414,12 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		    	int type = item/2; //get information from user
 		    	boolean isPositive = item%2==0; //get information from user
 		    	Log.d("a-t", sRow+","+sCol);
-		    	if(tileLayout.isValid(sRow, sCol, type, isPositive))
+		    	if(gameState.isValid(sRow, sCol, type, isPositive))
 		    	{
-		    		tileLayout.add(sRow, sCol, type, isPositive);
-		    		rowgroup.addTile(sRow, sCol, new Tile(type, isPositive));
+		    		gameState.add(sRow, sCol, type, isPositive);
+		    		gameState.addTile(sRow, sCol, new Tile(type, isPositive));
 					button.get(sPressed.getId()).setText(Tile.getSymbol(type));
-					updateButtons(rowgroup.updatePlusTiles(sRow, sCol),sRow,sCol);
+					updateButtons(gameState.updatePlusTiles(sRow, sCol),sRow,sCol);
 					setButton(sRow, sCol, sPressed, type);					
 		    	}else{
 		    		Toast.makeText(getApplicationContext(), "Can't place selected tile.", Toast.LENGTH_LONG).show();

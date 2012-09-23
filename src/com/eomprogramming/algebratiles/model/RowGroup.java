@@ -84,6 +84,14 @@ public class RowGroup {
 		return rows;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public RowGroup clone()
+	{
+		RowGroup r = new RowGroup();
+		r.rows = (LinkedList<Row>) rows.clone();
+		return r;
+	}
+	
 	public void print(){
 		for(Row r: rows){
 			String line = "";

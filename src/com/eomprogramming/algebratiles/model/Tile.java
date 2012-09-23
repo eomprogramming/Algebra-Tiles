@@ -70,4 +70,9 @@ public class Tile {
 				return " ";
 		}
 	}
+	
+	public Tile clone()
+	{
+		return new Tile(type, positive);
+	}
 }

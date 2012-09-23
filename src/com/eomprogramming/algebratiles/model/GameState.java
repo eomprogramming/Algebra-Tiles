@@ -5,12 +5,32 @@ import java.util.LinkedList;
 
 public class GameState {
 	public LinkedList<TileLayout> states;
+	public LinkedList<RowGroup> states2;
 	
 	public GameState()
 	{
 		states = new LinkedList<TileLayout>();
 		states.add(new TileLayout());
+		states2 = new LinkedList<RowGroup>();
+		states2.add(new RowGroup());
 	}
+	
+	//start row group methods
+	public boolean addTile(int row, int col, Tile t){
+		RowGroup r = states2.peekLast().clone();
+		boolean b = r.addTile(row, col, t);
+		states2.add(r);
+		return b;
+	}
+	
+	public LinkedList<Pos> updatePlusTiles(int row, int col){
+		return states2.peekLast().updatePlusTiles(row, col);		
+	}
+	
+	public LinkedList<Row> getRows(){
+		return states2.peekLast().getRows();
+	}
+	//end row group methods
 	
 	public int getPrevNumRows()
 	{
@@ -68,5 +88,6 @@ public class GameState {
 	public void undo()
 	{
 		states.pop();
+		states2.pop();
 	}
 }
