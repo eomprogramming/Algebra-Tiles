@@ -9,6 +9,7 @@ import com.eomprogramming.algebratiles.datastructure.Stack;
 public class GameState {
 	public Stack<TileLayout> states;
 	public Stack<RowGroup> states2;
+	public static GameState saved;
 	
 	public GameState()
 	{

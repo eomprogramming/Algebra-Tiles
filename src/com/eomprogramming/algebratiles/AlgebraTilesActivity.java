@@ -34,7 +34,6 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	private ArrayList<Button> button;
 	private ArrayList<TableRow> row;
 	private GameState gameState;
-	private static GameState savedGameState;
 	private TableLayout table, leftTable;
 	private int sRow;
 	private int sCol;
@@ -52,7 +51,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
- 		
+         		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
 		LinearLayout main_layout = new LinearLayout(this);
@@ -175,9 +174,13 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		main_layout.addView(buttongroup_layout);
 		
-		//create non-GUI stuff
-		if(gameState == null)
-			gameState = new GameState();
+		gameState = new GameState();
+		
+		//Check if it's coming from an undo
+        if(getIntent().getBooleanExtra("isUndo", false)){
+		      setGameState(GameState.saved);
+		      applyGameState();
+       }
     }
     
 	public void onClick(View v) {
@@ -208,8 +211,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			overridePendingTransition(0, 0);
 			
 		}else if(v.getId() == UNDO){
-			
-			savedGameState = gameState;
+			gameState.undo();
+			GameState.saved = gameState;
 			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());				
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
 			i.putExtra("isUndo", true);
@@ -453,35 +456,36 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	 * Should only ever be called at the start of an activity!
 	 */
 	public void applyGameState(){
+		Log.d("a-t", "Undo in progress");
 		//Clear what the constructor added
-		table.removeAllViews();
-		button.remove();
-		row.remove();
+		table.removeViewAt(1);
+		button.remove(0);
+		row.remove(0);
+		int i = 0;
+		RowGroup.print(gameState.getRows());
 		
 		//Go through all rows and add the tiles
 		for(Row templateRow : gameState.getRows()){
 			row.add(new TableRow(this));
-			table.addView(row.getLast());
-			for(Tile t : templateRow.getTiles()){
-				int i = 0;
+			row.get(row.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));			
+			table.addView(row.get(row.size()-1));
+			i = 0;
+			for(Tile t : templateRow.getTiles()){	
+				Log.d("a-t", "Tile "+t.getSymbol() + " at "+templateRow.getPosition()+ ", "+i);
 				if(t.getType() == Tile.EMPTY){
 					row.get(templateRow.getPosition()).addView(getDisplayButton());
 				}else{
+					Log.d("a-t", "Tile "+t.getSymbol()+" added");
 					button.add(getButton(templateRow.getPosition(),i));
-					row.get(templateRow.getPosition()).addView(button.getLast());
+					button.get(button.size()-1).setText(Tile.getSymbol(t.getType()));
+					row.get(templateRow.getPosition()).addView(button.get(button.size()-1));
 					if(t.getType() != Tile.PLUS)
-						setButton(templateRow.getPosition(),i,button.getLast(),t.getType());
+						setButton(templateRow.getPosition(),i,button.get(button.size()-1),t.getType());
 				}
 				i++;
 			}			
 		}
+		Log.d("a-t", "bsize: "+button.size()+" row 0: "+row.get(0).getChildCount());		
+		table.invalidate();
 	}
-	
-	protected void onNewIntent(Intent intent) {
-		   super.onNewIntent(intent);
-		   if(intent.getBooleanExtra("isUndo", false)){
-		      setGameState(AlgebraTilesActivity.savedGameState);
-		      applyGameState();
-		   }
-		}
 }

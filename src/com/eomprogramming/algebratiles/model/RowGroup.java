@@ -13,7 +13,7 @@ public class RowGroup {
 		Row firstRow = new Row(0);
 		firstRow.add(new Tile(Tile.PLUS, true));
 		rows.add(firstRow);
-		print();
+	//	print();
 	}
 	
 	public boolean addTile(int row, int col, Tile t){
@@ -105,5 +105,15 @@ public class RowGroup {
 		Log.d("a-t", "-----------------------------");
 	}
 	
+	public static void print(ArrayList<Row> rows){
+		for(Row r: rows){
+			String line = "";
+			for(Tile t : r.getTiles()){
+				line+=t.getSymbol();
+			}
+			Log.d("a-t", line);
+		}
+		Log.d("a-t", "-----------------------------");
+	}
 	
 }
