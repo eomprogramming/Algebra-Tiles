@@ -63,7 +63,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          		
-       GameState.q = QEquationGenerator.generateRandom();
+        GameState.q = QEquationGenerator.generateRandom();
         
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
@@ -198,7 +198,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     
 	public void onClick(View v) {
 		if(v.getId() >= 0){
-			
+			RowGroup.print(gameState.getRows());
 	    	sPressed = (Button)v;
 	    	String pos = sPressed.getHint().toString();
 	    	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
@@ -231,8 +231,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			i.putExtra("isUndo", true);
 			startActivity(i);
 			overridePendingTransition(0, 0);*/
-			undo();
-			
+			if(gameState.getRows().get(0).getTiles().get(0).getType() != Tile.PLUS)
+				undo();
+			else
+				Toast.makeText(this, "Nothing to undo", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -301,7 +303,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 						row.get(p.row).addView(button.get(button.size()-1));		
 					}
 				}
-				if(p.row == gameState.getPrevNumRows()+1){
+				if(p.row == gameState.getPrevNumRows()+1 && leftTable.getChildCount() < table.getChildCount()){
 					//update factors on the left
 					leftSideRows.add(new TableRow(this));
 					leftSideRows.get(leftSideRows.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
