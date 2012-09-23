@@ -103,9 +103,12 @@ public class GameState {
 	
 	public GameState undo()
 	{
-
-		states.pop();
-		states2.pop();
+		if(states2.size() != 0)
+		{
+			states.pop();
+			states2.pop();
+		}
+		
 
 		return this;
 	}
