@@ -198,7 +198,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     
 	public void onClick(View v) {
 		if(v.getId() >= 0){
-			RowGroup.print(gameState.getRows());
+			
 	    	sPressed = (Button)v;
 	    	String pos = sPressed.getHint().toString();
 	    	sRow = Integer.parseInt(pos.substring(0, pos.indexOf(",")));
@@ -253,7 +253,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					button.add(getButton(p.row,p.col));
 					row.get(p.row).addView(button.get(button.size()-1));
 				}
-				if(p.col == gameState.getPrevNumCols()+1){
+				if(p.col == gameState.getPrevNumCols()+1 && topRow.getChildCount() < row.get(0).getChildCount()){
 					//Update helper text at top
 					topButtons.add(getDisplayButton());
 					topRow.addView(topButtons.get(topButtons.size()-1));
@@ -592,6 +592,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		gameState = new GameState();
 		int id = 0;
+		RowGroup.print(rows);
 		for(int i = 0; i < rows.size(); i++)
 		{
 			Row r = rows.get(i);
@@ -599,15 +600,17 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			for(int j = 0; j < tiles.size(); j++)
 			{
 				Tile t = tiles.get(j);
-				if(t.getType() == Tile.PLUS)
+				if(t.getType() == Tile.PLUS||t.getType()==Tile.EMPTY)
 					continue;
 				gameState.add(i, j, t.getType(), t.isPositive());
 	    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
-				button.get(id).setText(Tile.getSymbol(t.getType()));
+				((Button) row.get(i).getChildAt(j)).setText(""+id);
 				updateButtons(gameState.updatePlusTiles(i, j),i,j);
-				setButton(i, j, button.get(id++), t.getType());	
+//				Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
+				setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());	
 			}
 		}
+		RowGroup.print(gameState.getRows());
 	}
 	
 	public void setGameState(GameState gs){
