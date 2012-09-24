@@ -604,7 +604,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					continue;
 				gameState.add(i, j, t.getType(), t.isPositive());
 	    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
-				((Button) row.get(i).getChildAt(j)).setText(""+id);
+				((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
 				updateButtons(gameState.updatePlusTiles(i, j),i,j);
 //				Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
 				setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());	
