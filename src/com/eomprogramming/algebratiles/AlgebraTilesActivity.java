@@ -468,6 +468,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	{
 		gameState.undo();
 		ArrayList<Row> rows = gameState.getRows();
+		GameState temp = gameState;
 		main_layout = new LinearLayout(this);
 		main_layout.setOrientation(LinearLayout.VERTICAL);
 		main_layout.setBackgroundColor(Color.rgb(60, 60, 60));
@@ -603,9 +604,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
 				button.get(id).setText(Tile.getSymbol(t.getType()));
 				updateButtons(gameState.updatePlusTiles(i, j),i,j);
-				setButton(i, j, button.get(id++), t.getType());	
+				setButton(i, j, button.get(id), t.getType());	
+				id++;
 			}
 		}
+		//gameState = temp;
 	}
 	
 	public void setGameState(GameState gs){
