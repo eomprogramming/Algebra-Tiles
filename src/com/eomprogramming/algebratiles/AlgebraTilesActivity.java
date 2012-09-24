@@ -610,6 +610,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());	
 			}
 		}
+		gameState = temp;
 		RowGroup.print(gameState.getRows());
 	}
 	
