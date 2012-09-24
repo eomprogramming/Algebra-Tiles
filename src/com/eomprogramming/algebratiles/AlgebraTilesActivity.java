@@ -63,7 +63,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          		
-       GameState.q = QEquationGenerator.generateRandom();
+        GameState.q = QEquationGenerator.generateRandom();
         
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
@@ -231,8 +231,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			i.putExtra("isUndo", true);
 			startActivity(i);
 			overridePendingTransition(0, 0);*/
-			undo();
-			
+			if(gameState.getRows().get(0).getTiles().get(0).getType() != Tile.PLUS)
+				undo();
+			else
+				Toast.makeText(this, "Nothing to undo", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -251,7 +253,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					button.add(getButton(p.row,p.col));
 					row.get(p.row).addView(button.get(button.size()-1));
 				}
-				if(p.col == gameState.getPrevNumCols()+1){
+				if(p.col == gameState.getPrevNumCols()+1 && topRow.getChildCount() < row.get(0).getChildCount()){
 					//Update helper text at top
 					topButtons.add(getDisplayButton());
 					topRow.addView(topButtons.get(topButtons.size()-1));
@@ -301,7 +303,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 						row.get(p.row).addView(button.get(button.size()-1));		
 					}
 				}
-				if(p.row == gameState.getPrevNumRows()+1){
+				if(p.row == gameState.getPrevNumRows()+1 && leftTable.getChildCount() < table.getChildCount()){
 					//update factors on the left
 					leftSideRows.add(new TableRow(this));
 					leftSideRows.get(leftSideRows.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
@@ -590,7 +592,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		main_layout.addView(buttongroup_layout);
 		
 		gameState = new GameState();
-		int id = 0;
+		RowGroup.print(rows);
 		for(int i = 0; i < rows.size(); i++)
 		{
 			Row r = rows.get(i);
@@ -598,17 +600,17 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			for(int j = 0; j < tiles.size(); j++)
 			{
 				Tile t = tiles.get(j);
-				if(t.getType() == Tile.PLUS)
+				if(t.getType() == Tile.PLUS||t.getType()==Tile.EMPTY)
 					continue;
 				gameState.add(i, j, t.getType(), t.isPositive());
 	    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
-				button.get(id).setText(Tile.getSymbol(t.getType()));
+				((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
 				updateButtons(gameState.updatePlusTiles(i, j),i,j);
-				setButton(i, j, button.get(id), t.getType());	
-				id++;
+//				Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
+				setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());	
 			}
 		}
-		//gameState = temp;
+		RowGroup.print(gameState.getRows());
 	}
 	
 	public void setGameState(GameState gs){
