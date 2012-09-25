@@ -99,6 +99,20 @@ public class TileLayout {
 		}
 		else
 		{
+			if(row == rowType.size() && isLeftPositive == EMPTY)
+			{
+				if(isPositive)
+					isLeftPositive = POSITIVE;
+				else
+					isLeftPositive = NEGATIVE;
+			}
+			if(col == colType.size() && isTopPositive == EMPTY)
+			{
+				if(isPositive ^ isLeftPositive == NEGATIVE)
+					isTopPositive = POSITIVE;
+				else
+					isTopPositive = NEGATIVE;
+			}
 			addRow(row, Tile.ONE);
 			addCol(col, Tile.ONE);
 		}
@@ -137,19 +151,13 @@ public class TileLayout {
 		{
 			if(isHorizontal(row, col))
 			{
-				if(!(isLeftPositive == EMPTY))
-				{
-					if(isLeftPositive == POSITIVE ^ isPositive)
+				if(!(isLeftPositive == EMPTY) && isLeftPositive == POSITIVE ^ isPositive)
 						return false;
-				}
 			}
 			else
 			{
-				if(!(isTopPositive == EMPTY))
-				{
-					if(isTopPositive == POSITIVE ^ isPositive)
+				if(!(isTopPositive == EMPTY) && isTopPositive == POSITIVE ^ isPositive)
 						return false;
-				}
 			}
 		}
 		if(row < rowType.size() && col < colType.size())
@@ -169,7 +177,7 @@ public class TileLayout {
 				return true;
 			if(type == Tile.X_SQUARED && rowType.get(row) == Tile.X)
 				return true;
-			if(type == Tile.ONE && rowType.get(row) == Tile.ONE)
+			if(type == Tile.ONE && rowType.get(row) == Tile.ONE && (isLeftPositive != NEGATIVE ^ isTopPositive != NEGATIVE ^ isPositive))
 				return true;
 			return false;
 		}
@@ -179,7 +187,7 @@ public class TileLayout {
 				return true;
 			if(type == Tile.X_SQUARED && colType.get(col) == Tile.X)
 				return true;
-			if(type == Tile.ONE && colType.get(col) == Tile.ONE)
+			if(type == Tile.ONE && colType.get(col) == Tile.ONE && (isLeftPositive != NEGATIVE ^ isTopPositive != NEGATIVE ^ isPositive))
 				return true;
 			return false;
 		}

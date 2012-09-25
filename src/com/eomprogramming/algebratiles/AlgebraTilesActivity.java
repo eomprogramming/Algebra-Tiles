@@ -253,7 +253,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 					button.add(getButton(p.row,p.col));
 					row.get(p.row).addView(button.get(button.size()-1));
 				}
-				if(p.col == gameState.getPrevNumCols()+1 && topRow.getChildCount() < row.get(0).getChildCount()){
+				Log.d("^.^", p.col + " " + gameState.getPrevNumCols());
+				if(p.col == gameState.getPrevNumCols()+1){
 					//Update helper text at top
 					topButtons.add(getDisplayButton());
 					topRow.addView(topButtons.get(topButtons.size()-1));
@@ -303,7 +304,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 						row.get(p.row).addView(button.get(button.size()-1));		
 					}
 				}
-				if(p.row == gameState.getPrevNumRows()+1 && leftTable.getChildCount() < table.getChildCount()){
+				if(p.row == gameState.getPrevNumRows()+1){
 					//update factors on the left
 					leftSideRows.add(new TableRow(this));
 					leftSideRows.get(leftSideRows.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
