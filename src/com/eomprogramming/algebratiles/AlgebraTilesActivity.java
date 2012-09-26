@@ -216,7 +216,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		}else if(v.getId() == SUBMIT){
 			ArrayList<Boolean> factorSign = gameState.getRowSign();
 			ArrayList<Integer> factorType = gameState.getRowType();
-			int a=0, b=0, c=0, d=0;
+			int a=0, b=0, c=0, d=0, e=factorSign.size(), f;
 			
 			for(int i = 0; i < factorSign.size(); i++)
 			{
@@ -233,6 +233,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			
 			factorSign = gameState.getColSign();
 			factorType = gameState.getColType();
+			f = factorSign.size();
 			
 			for(int i = 0; i < factorSign.size(); i++)
 			{
@@ -246,8 +247,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				else
 					c += add;
 			}
-			
-			if(GameState.q.equals(new QEquation(a, b, c, d)))
+			Log.d("submit", button.size()+"");
+			if(GameState.q.equals(new QEquation(a, b, c, d)) && button.size() == e*f+e+f)
 				Toast.makeText(this, "Correct :D", Toast.LENGTH_SHORT).show();
 			else
 				Toast.makeText(this, "Try Again", Toast.LENGTH_SHORT).show();
