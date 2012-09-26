@@ -177,7 +177,8 @@ public class TileLayout {
 				return true;
 			if(type == Tile.X_SQUARED && rowType.get(row) == Tile.X)
 				return true;
-			if(type == Tile.ONE && rowType.get(row) == Tile.ONE && (isLeftPositive != NEGATIVE ^ isTopPositive != NEGATIVE ^ isPositive))
+			//if(type == Tile.ONE && rowType.get(row) == Tile.ONE && (isLeftPositive != NEGATIVE ^ isTopPositive != NEGATIVE ^ isPositive))
+			if(type == Tile.ONE && rowType.get(row) == Tile.ONE)
 				return true;
 			return false;
 		}
@@ -187,7 +188,8 @@ public class TileLayout {
 				return true;
 			if(type == Tile.X_SQUARED && colType.get(col) == Tile.X)
 				return true;
-			if(type == Tile.ONE && colType.get(col) == Tile.ONE && (isLeftPositive != NEGATIVE ^ isTopPositive != NEGATIVE ^ isPositive))
+			//if(type == Tile.ONE && colType.get(col) == Tile.ONE && (isLeftPositive != NEGATIVE ^ isTopPositive != NEGATIVE ^ isPositive))
+			if(type == Tile.ONE && colType.get(col) == Tile.ONE)
 				return true;
 			return false;
 		}
