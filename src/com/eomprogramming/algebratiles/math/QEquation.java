@@ -19,13 +19,21 @@ public class QEquation {
 	public QEquation(){
 		
 	}
+	
+	public QEquation(int a, int b, int c, int d){
+		leftCo = a;
+		s = b;
+		rightCo = c;
+		r = d;
+		this.generateStandardForm();
+	}
 
 	public void setLeftCoefficient(int l){
-			leftCo = l;
+		leftCo = l;
 	}
 	
 	public void setRightCoefficient(int r){
-			rightCo = r;
+		rightCo = r;
 	}
 	
 	public void setS(int in_s){
@@ -72,5 +80,10 @@ public class QEquation {
 	
 	public String toString(){
 		return a + "x^2 + "+ b +"x + "+c;
+	}
+	
+	public boolean equals(QEquation q)
+	{
+		return q.a == a && q.b == b && q.c == c;
 	}
 }

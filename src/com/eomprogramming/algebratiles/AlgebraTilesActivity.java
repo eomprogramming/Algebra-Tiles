@@ -3,6 +3,7 @@ package com.eomprogramming.algebratiles;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.eomprogramming.algebratiles.math.QEquation;
 import com.eomprogramming.algebratiles.math.QEquationGenerator;
 import com.eomprogramming.algebratiles.model.*;
 
@@ -213,8 +214,43 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	    	}
 	    	
 		}else if(v.getId() == SUBMIT){
+			ArrayList<Boolean> factorSign = gameState.getRowSign();
+			ArrayList<Integer> factorType = gameState.getRowType();
+			int a=0, b=0, c=0, d=0;
 			
-			Toast.makeText(this, "Feature not available yet", Toast.LENGTH_SHORT).show();
+			for(int i = 0; i < factorSign.size(); i++)
+			{
+				int add = 0;
+				if(factorSign.get(i))
+					add = 1;
+				else
+					add = -1;
+				if(factorType.get(i) == Tile.ONE)
+					b += add;
+				else
+					a += add;
+			}
+			
+			factorSign = gameState.getColSign();
+			factorType = gameState.getColType();
+			
+			for(int i = 0; i < factorSign.size(); i++)
+			{
+				int add = 0;
+				if(factorSign.get(i))
+					add = 1;
+				else
+					add = -1;
+				if(factorType.get(i) == Tile.ONE)
+					d += add;
+				else
+					c += add;
+			}
+			
+			if(GameState.q.equals(new QEquation(a, b, c, d)))
+				Toast.makeText(this, "Correct :D", Toast.LENGTH_SHORT).show();
+			else
+				Toast.makeText(this, "Try Again", Toast.LENGTH_SHORT).show();
 			
 		}else if(v.getId() == CLEAR){
 			
