@@ -631,21 +631,31 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		gameState = new GameState();
 		RowGroup.print(rows);
-		for(int i = 0; i < rows.size(); i++)
+		int x = 1;
+		for(int i = 0; i < rows.size()-1; i++)
 		{
 			Row r = rows.get(i);
 			ArrayList<Tile> tiles = r.getTiles();
-			for(int j = 0; j < tiles.size(); j++)
+			for(int j = 0; j < tiles.size()-x; j++)
 			{
 				Tile t = tiles.get(j);
-				if(t.getType() == Tile.PLUS||t.getType()==Tile.EMPTY)
+				if(t.getType()==Tile.EMPTY)
 					continue;
-				gameState.add(i, j, t.getType(), t.isPositive());
-	    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
-				((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
-				updateButtons(gameState.updatePlusTiles(i, j),i,j);
-//				Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
-				setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());	
+				if(t.getType()==Tile.PLUS)
+				{
+					//gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
+					button.add(getDisplayButton());
+					row.get(i).addView(button.get(button.size()-1));
+				}
+				else
+				{
+					gameState.add(i, j, t.getType(), t.isPositive());
+		    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
+					((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
+					updateButtons(gameState.updatePlusTiles(i, j),i,j);
+//					Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
+					setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());
+				}
 			}
 		}
 		gameState = temp;
