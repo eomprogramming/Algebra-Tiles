@@ -507,12 +507,14 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 	public void undo()
 	{
-		gameState.undo();
+		GameState temp = gameState;
 		Stack<Pos> moves = new Stack<Pos>();
+		if(!gameState.moves.isEmpty())
+			gameState.moves.pop();
 		while(!gameState.moves.isEmpty())
 			moves.push(gameState.moves.pop().clone());
 		
-		GameState temp = gameState;
+		
 		main_layout = new LinearLayout(this);
 		main_layout.setOrientation(LinearLayout.VERTICAL);
 		main_layout.setBackgroundColor(Color.rgb(60, 60, 60));
@@ -672,7 +674,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			Pos m = moves.pop();
 			int i = m.row;
 			int j = m.col;
-			Tile t = temp.getRows().get(i).getTiles().get(i);
+			Tile t = temp.getRows().get(i).getTiles().get(j);
 			gameState.add(i, j, t.getType(), t.isPositive());
     		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
 			((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
