@@ -3,6 +3,7 @@ package com.eomprogramming.algebratiles;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.eomprogramming.algebratiles.datastructure.Stack;
 import com.eomprogramming.algebratiles.math.QEquation;
 import com.eomprogramming.algebratiles.math.QEquationGenerator;
 import com.eomprogramming.algebratiles.model.*;
@@ -507,7 +508,10 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	public void undo()
 	{
 		gameState.undo();
-		ArrayList<Row> rows = gameState.getRows();
+		Stack<Pos> moves = new Stack<Pos>();
+		while(!gameState.moves.isEmpty())
+			moves.push(gameState.moves.pop().clone());
+		
 		GameState temp = gameState;
 		main_layout = new LinearLayout(this);
 		main_layout.setOrientation(LinearLayout.VERTICAL);
@@ -629,8 +633,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		main_layout.addView(buttongroup_layout);
 		
+		/*
 		gameState = new GameState();
-		RowGroup.print(rows);
 		int x = 1;
 		for(int i = 0; i < rows.size()-1; i++)
 		{
@@ -659,7 +663,23 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 			}
 		}
 		gameState = temp;
+		
 		RowGroup.print(gameState.getRows());
+		*/
+		gameState = new GameState();
+		while(!moves.isEmpty())
+		{
+			Pos m = moves.pop();
+			int i = m.row;
+			int j = m.col;
+			Tile t = temp.getRows().get(i).getTiles().get(i);
+			gameState.add(i, j, t.getType(), t.isPositive());
+    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
+			((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
+			updateButtons(gameState.updatePlusTiles(i, j),i,j);
+//			Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
+			setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());
+		}
 	}
 	
 	public void setGameState(GameState gs){

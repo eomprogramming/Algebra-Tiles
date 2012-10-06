@@ -12,7 +12,7 @@ import android.util.Log;
 public class GameState {
 	public Stack<TileLayout> states;
 	public Stack<RowGroup> states2;
-	public static GameState saved;
+	public Stack<Pos> moves;
 	public static QEquation q;
 	
 	public GameState()
@@ -21,6 +21,7 @@ public class GameState {
 		states.push(new TileLayout());
 		states2 = new Stack<RowGroup>();
 		states2.push(new RowGroup());
+		moves = new Stack<Pos>();
 	}
 	
 	//start row group methods
@@ -77,8 +78,10 @@ public class GameState {
 		return states.peek().colType;
 	}
 	
+	//from tile layout
 	public void add(int row, int col, int type, boolean isPositive)
 	{
+		moves.push(new Pos(row, col));
 		TileLayout t = states.peek().clone();
 		t.add(row, col, type, isPositive);
 		states.push(t);
@@ -103,13 +106,13 @@ public class GameState {
 	
 	public GameState undo()
 	{
-		if(states2.size() != 0)
+		if(states2.size() > 1)
 		{
 			states.pop();
 			states2.pop();
+			moves.pop();
 		}
 		
-
 		return this;
 	}
 }

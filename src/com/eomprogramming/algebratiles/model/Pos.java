@@ -24,4 +24,9 @@ public class Pos {
 	public void setCol(int col) {
 		this.col = col;
 	}
+	
+	public Pos clone()
+	{
+		return new Pos(row, col);
+	}
 }

@@ -71,6 +71,22 @@ public class QEquation {
 	public int getR() {
 		return r;
 	}
+	
+	public static boolean isValid(int a, int b, int c)
+	{
+		int x = a*c; int y = (int) Math.sqrt(x); int z = 1;
+		if(c == 0)
+			return true;
+		else if(c < 0)
+			z = -1;
+		for(int i = 1; i <= y; i++)
+		{
+			int j = x/i*z;
+			if(i + j == b || (0-j) + (0-i) == b)
+				return true;
+		}
+		return false;
+	}
 
 	public void generateStandardForm(){
 		a = leftCo * rightCo;
