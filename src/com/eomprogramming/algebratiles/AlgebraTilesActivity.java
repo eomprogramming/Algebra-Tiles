@@ -53,8 +53,9 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         		
-        GameState.q = QEquationGenerator.generateRandom();
+        
+        if(GameState.q == null)
+        	GameState.q = QEquationGenerator.generateRandom();
         
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
