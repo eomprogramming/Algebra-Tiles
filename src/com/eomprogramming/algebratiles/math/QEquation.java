@@ -102,4 +102,47 @@ public class QEquation {
 	{
 		return q.a == a && q.b == b && q.c == c;
 	}
+	
+	public static QEquation factor(int a, int b, int c)
+	{
+		if(b == 0 && (a > 0)^(c > 0) && Math.sqrt(c/a) % 1 == 0)
+		{
+			return new QEquation(a, (int)(a*Math.sqrt(c/a)), 1, (int)(0-Math.sqrt(c/a)));
+		}
+		if(c == 0)
+		{
+			return new QEquation(a, b, 1, 0);
+		}
+		
+		int n = a*c; int m = (int) Math.sqrt(n);
+		int j = 0;
+		for(int i = 0; i <= m; i++)
+		{
+			j = n/i;
+			if(i + j == b)
+			{
+				break;
+			}
+			if((0-j) + (0-i) == b)
+			{
+				j = -j;
+				break;
+			}
+		}
+		if(j != 0)
+		{
+			int i = n/j;
+			int x = gcd(a, i);
+			int y = gcd(j, c);
+			return new QEquation(x, y, j/y, c/y);
+		}
+		return null;
+	}
+	
+	public static int gcd(int a, int b)
+	{
+		if(a == 0)
+			return b;
+		return gcd(b%a, a);
+	}
 }
