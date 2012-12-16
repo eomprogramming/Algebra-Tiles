@@ -35,7 +35,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 
 	private ArrayList<Button> button, topButtons;
 	private ArrayList<TableRow> row, leftSideRows;
-	private GameState gameState;
+	private static GameState gameState;
 	private TableLayout table, leftTable;	
 	private Button sPressed, equationText, submitButton, clearButton, undoButton;	
 	private TableRow topRow;	
@@ -54,8 +54,11 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        if(GameState.q == null)
-        	GameState.q = QEquationGenerator.generateRandom();
+        if(gameState == null)
+        	gameState = new GameState();
+        
+        if(gameState.q == null)
+        	gameState.q = QEquationGenerator.generateRandom();
         
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
@@ -65,7 +68,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		equationText = new Button(this);
 		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
-		equationText.setText(GameState.q.toString());
+		equationText.setText(gameState.q.toString());
 		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
 		equationText.setTextColor(Color.rgb(60, 60, 60));
 		equationText.setGravity(Gravity.CENTER);
@@ -181,7 +184,25 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		main_layout.addView(buttongroup_layout);
 		
-		gameState = new GameState();		
+		GameState temp = gameState;
+		Stack<Pos> moves = new Stack<Pos>();
+		while(!gameState.moves.isEmpty())
+			moves.push(gameState.moves.pop().clone());
+		
+		gameState = new GameState();	
+		while(!moves.isEmpty())
+		{
+			Pos m = moves.pop();
+			int i = m.row;
+			int j = m.col;
+			Tile t = temp.getRows().get(i).getTiles().get(j);
+			gameState.add(i, j, t.getType(), t.isPositive());
+    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
+			((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
+			updateButtons(gameState.updatePlusTiles(i, j),i,j);
+//			Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
+			setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());
+		}
     }
     
 	public void onClick(View v) {
@@ -241,7 +262,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				Toast.makeText(this, "Try Again", Toast.LENGTH_SHORT).show();
 			
 		}else if(v.getId() == CLEAR){
-			
+			while(!gameState.moves.isEmpty())
+				gameState.moves.pop();
 			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
 			startActivity(i);

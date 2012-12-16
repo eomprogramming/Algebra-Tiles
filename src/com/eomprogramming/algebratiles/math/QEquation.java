@@ -1,5 +1,7 @@
 package com.eomprogramming.algebratiles.math;
 
+import android.util.Log;
+
 /**
  * 
  * A factorable quadratic equation:
@@ -105,37 +107,44 @@ public class QEquation {
 	
 	public static QEquation factor(int a, int b, int c)
 	{
-		if(b == 0 && (a > 0)^(c > 0) && Math.sqrt(c/a) % 1 == 0)
+		if(a == 0)
+			return null;
+		if(b == 0)
 		{
-			return new QEquation(a, (int)(a*Math.sqrt(c/a)), 1, (int)(0-Math.sqrt(c/a)));
+			if((c > 0)^(a > 0))
+				return new QEquation((int)Math.sqrt(a), (int)(Math.sqrt(0-c)), (int)Math.sqrt(a), (int)(0-Math.sqrt(0-c)));
+			return null;
 		}
 		if(c == 0)
 		{
 			return new QEquation(a, b, 1, 0);
 		}
 		
-		int n = a*c; int m = (int) Math.sqrt(n);
+		int n = a*c; int m = (int) Math.sqrt(Math.abs(n));
 		int j = 0;
-		for(int i = 0; i <= m; i++)
+		for(int i = 1; i <= m; i++)
 		{
-			j = n/i;
-			if(i + j == b)
+			if(i + n/i == b)
 			{
+				j = n/i;
 				break;
 			}
-			if((0-j) + (0-i) == b)
+			if((0-n/i) + (0-i) == b)
 			{
-				j = -j;
+				j = 0-n/i;
 				break;
 			}
+			if(i == 1)
+				Log.d("eq", "" + n + " asdf " + (i + j));
 		}
 		if(j != 0)
 		{
 			int i = n/j;
 			int x = gcd(a, i);
 			int y = gcd(j, c);
-			return new QEquation(x, y, j/y, c/y);
+			return new QEquation(x, y, a/x, c/y);
 		}
+		Log.d("eq", "reached");
 		return null;
 	}
 	
