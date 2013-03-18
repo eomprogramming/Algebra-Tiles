@@ -77,6 +77,7 @@ public class Tile {
 		}
 	}
 	
+	@Override
 	public Tile clone()
 	{
 		Tile t = new Tile();

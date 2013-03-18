@@ -477,6 +477,7 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 	}
 	
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Pick a tile");

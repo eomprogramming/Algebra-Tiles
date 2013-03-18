@@ -11,6 +11,7 @@ public class TileLayout {
 	
 	public int isTopPositive; //if the top row contains positive x tiles
 	public int isLeftPositive; //if the left row contains positive x tiles
+	public int isXSquaredPositive;
 	
 	private int prevNumRows;
 	private int prevNumCols;
@@ -18,6 +19,7 @@ public class TileLayout {
 	public static int POSITIVE = 1;
 	public static int NEGATIVE = 0;
 	public static int EMPTY = -1;
+
 	
 	public TileLayout()
 	{
@@ -28,6 +30,7 @@ public class TileLayout {
 		
 		prevNumRows = 0;
 		prevNumCols = 0;
+		isXSquaredPositive = 0;
 		
 		isTopPositive = EMPTY; //if the top row contains positive x tiles
 		isLeftPositive = EMPTY; //if the left row contains positive x tiles
@@ -69,6 +72,7 @@ public class TileLayout {
 		{
 			if(isHorizontal(row, col))
 			{
+				
 				if(row == rowType.size() && isLeftPositive == EMPTY)
 				{
 					if(isPositive)
@@ -94,6 +98,13 @@ public class TileLayout {
 		}
 		else if(type == Tile.X_SQUARED)
 		{
+			if(isXSquaredPositive == 0)
+			{
+				if(isPositive)
+					isXSquaredPositive = 1;
+				else
+					isXSquaredPositive = -1;
+			}
 			addRow(row, Tile.X);
 			addCol(col, Tile.X);
 		}
@@ -151,14 +162,29 @@ public class TileLayout {
 		{
 			if(isHorizontal(row, col))
 			{
+				if(col > 0 && colType.get(col-1) > Tile.X)
+					return false;
 				if(!(isLeftPositive == EMPTY) && isLeftPositive == POSITIVE ^ isPositive)
-						return false;
+					return false;
 			}
 			else
 			{
+				if(row > 0 && rowType.get(row-1) > Tile.X)
+					return false;
 				if(!(isTopPositive == EMPTY) && isTopPositive == POSITIVE ^ isPositive)
-						return false;
+					return false;
 			}
+		}
+		if(type == Tile.X_SQUARED)
+		{
+			if(row > 0 && rowType.get(row-1) > Tile.X)
+				return false;
+			if(col > 0 && colType.get(col-1) > Tile.X)
+				return false;
+			if(isPositive && isXSquaredPositive == -1)
+				return false;
+			if(!isPositive && isXSquaredPositive == 1)
+				return false;
 		}
 		if(row < rowType.size() && col < colType.size())
 		{
@@ -211,6 +237,7 @@ public class TileLayout {
 		return true;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public TileLayout clone()
 	{

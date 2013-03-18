@@ -86,6 +86,7 @@ public class RowGroup {
 		return rows;
 	}
 	
+	@Override
 	public RowGroup clone()
 	{
 		RowGroup r = new RowGroup();

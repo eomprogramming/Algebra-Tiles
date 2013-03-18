@@ -41,6 +41,7 @@ public class Row {
 		return tiles.get(i);
 	}
 	
+	@Override
 	public Row clone()
 	{
 		Row r = new Row(position);

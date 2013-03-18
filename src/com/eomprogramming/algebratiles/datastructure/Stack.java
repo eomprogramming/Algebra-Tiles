@@ -102,7 +102,8 @@ public class Stack<Item> implements Iterable<Item> {
    /**
      * Return string representation.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuilder s = new StringBuilder();
         for (Item item : this)
             s.append(item + " ");
