@@ -1,3 +1,3 @@
 Algebra Tiles App
 ---------------------------
-Factor quickly with algebra tiles!
+Factor quadratic equations quickly with algebra tiles!

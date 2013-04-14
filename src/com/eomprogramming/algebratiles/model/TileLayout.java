@@ -158,7 +158,7 @@ public class TileLayout {
 	
 	public boolean isValid(int row, int col, int type, boolean isPositive)
 	{
-		if(type == Tile.X)
+		if(type == Tile.X && (row == 0 || col == 0))
 		{
 			if(isHorizontal(row, col))
 			{

@@ -3,6 +3,7 @@ package com.eomprogramming.algebratiles;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.eomprogramming.algebratiles.datastructure.Stack;
 import com.eomprogramming.algebratiles.math.QEquation;
 import com.eomprogramming.algebratiles.math.QEquationGenerator;
 import com.eomprogramming.algebratiles.model.*;
@@ -32,30 +33,19 @@ import android.widget.Toast;
 
 public class AlgebraTilesActivity extends Activity implements OnClickListener {
 
-	private ArrayList<Button> button;
-	private ArrayList<TableRow> row;
-	private GameState gameState;
-	private TableLayout table, leftTable;
-	private int sRow;
-	private int sCol;
-	private Button sPressed;
-	
-	private TableRow topRow;
-	private ArrayList<Button> topButtons;
-	private ArrayList<TableRow> leftSideRows;
-	
-	private LinearLayout main_layout;
-	private TextView equationText;
+	private ArrayList<Button> button, topButtons;
+	private ArrayList<TableRow> row, leftSideRows;
+	private static GameState gameState;
+	private TableLayout table, leftTable;	
+	private Button sPressed, equationText, submitButton, clearButton, undoButton;	
+	private TableRow topRow;	
 	private ScrollView verticalScroll;
 	private LinearLayout.LayoutParams params;
 	private HorizontalScrollView horizontalScroll;
-	private LinearLayout layout;
-	private LinearLayout buttongroup_layout;
-	private Button submitButton;
-	private Button clearButton;
-	private Button undoButton;
+	private LinearLayout main_layout, layout, buttongroup_layout;
+	private int sRow, sCol;
 	
-	private final int SUBMIT = -1, CLEAR = -2, UNDO = -3; //button IDs; they are negative for a reason, keep them that way
+	private final int SUBMIT = -1, CLEAR = -2, UNDO = -3, EQUATION = -4; //button IDs; they are negative for a reason, keep them that way
 	
 	private final CharSequence[] items = {"X^2","-X^2", "X","-X", "1","-1"};
 	
@@ -63,8 +53,12 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         		
-        GameState.q = QEquationGenerator.generateRandom();
+        
+        if(gameState == null)
+        	gameState = new GameState();
+        
+        if(gameState.q == null)
+        	gameState.q = QEquationGenerator.generateRandom();
         
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);	
 				
@@ -72,14 +66,16 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		main_layout.setOrientation(LinearLayout.VERTICAL);
 		main_layout.setBackgroundColor(Color.rgb(60, 60, 60));
 		
-		equationText = new TextView(this);
+		equationText = new Button(this);
 		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
-		equationText.setText(GameState.q.toString());
+		equationText.setText(gameState.q.toString());
 		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
 		equationText.setTextColor(Color.rgb(60, 60, 60));
 		equationText.setGravity(Gravity.CENTER);
 		equationText.setTypeface(null,Typeface.BOLD);
 		equationText.setTextSize(28);
+		equationText.setId(EQUATION);
+		equationText.setOnClickListener(this);
 		equationText.setPadding(0, 15, 0, 15);
 		main_layout.addView(equationText);
 		
@@ -188,13 +184,25 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		main_layout.addView(buttongroup_layout);
 		
-		gameState = new GameState();
-		/*
-		//Check if it's coming from an undo
-        if(getIntent().getBooleanExtra("isUndo", false)){
-		      setGameState(GameState.saved);
-		      applyGameState();
-       }*/
+		GameState temp = gameState;
+		Stack<Pos> moves = new Stack<Pos>();
+		while(!gameState.moves.isEmpty())
+			moves.push(gameState.moves.pop().clone());
+		
+		gameState = new GameState();	
+		while(!moves.isEmpty())
+		{
+			Pos m = moves.pop();
+			int i = m.row;
+			int j = m.col;
+			Tile t = temp.getRows().get(i).getTiles().get(j);
+			gameState.add(i, j, t.getType(), t.isPositive());
+    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
+			((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
+			updateButtons(gameState.updatePlusTiles(i, j),i,j);
+//			Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
+			setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());
+		}
     }
     
 	public void onClick(View v) {
@@ -254,24 +262,20 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 				Toast.makeText(this, "Try Again", Toast.LENGTH_SHORT).show();
 			
 		}else if(v.getId() == CLEAR){
-			
+			while(!gameState.moves.isEmpty())
+				gameState.moves.pop();
 			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName() );				
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
 			startActivity(i);
 			overridePendingTransition(0, 0);
 			
 		}else if(v.getId() == UNDO){
-			/*gameState.undo();
-			GameState.saved = gameState;
-			Intent i = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());				
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
-			i.putExtra("isUndo", true);
-			startActivity(i);
-			overridePendingTransition(0, 0);*/
 			if(gameState.getRows().get(0).getTiles().get(0).getType() != Tile.PLUS)
 				undo();
 			else
 				Toast.makeText(this, "Nothing to undo", Toast.LENGTH_SHORT).show();
+		}else if(v.getId() == EQUATION){
+			startActivity(new Intent("com.eomprogramming.algebratiles.EQUATION"));
 		}
 	}
 
@@ -507,14 +511,19 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 	
 	public void undo()
 	{
-		gameState.undo();
-		ArrayList<Row> rows = gameState.getRows();
 		GameState temp = gameState;
+		Stack<Pos> moves = new Stack<Pos>();
+		if(!gameState.moves.isEmpty())
+			gameState.moves.pop();
+		while(!gameState.moves.isEmpty())
+			moves.push(gameState.moves.pop().clone());
+		
+		
 		main_layout = new LinearLayout(this);
 		main_layout.setOrientation(LinearLayout.VERTICAL);
 		main_layout.setBackgroundColor(Color.rgb(60, 60, 60));
 		
-		equationText = new TextView(this);
+		equationText = new Button(this);
 		equationText.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
 		equationText.setText(GameState.q.toString());
 		equationText.setBackgroundColor(Color.rgb(230, 230, 230));
@@ -522,6 +531,8 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		equationText.setGravity(Gravity.CENTER);
 		equationText.setTypeface(null,Typeface.BOLD);
 		equationText.setTextSize(28);
+		equationText.setId(EQUATION);
+		equationText.setOnClickListener(this);
 		equationText.setPadding(0, 15, 0, 15);
 		main_layout.addView(equationText);
 		
@@ -630,77 +641,20 @@ public class AlgebraTilesActivity extends Activity implements OnClickListener {
 		
 		main_layout.addView(buttongroup_layout);
 		
-		gameState = new GameState();
-		RowGroup.print(rows);
-		int x = 1;
-		for(int i = 0; i < rows.size()-1; i++)
-		{
-			Row r = rows.get(i);
-			ArrayList<Tile> tiles = r.getTiles();
-			for(int j = 0; j < tiles.size()-x; j++)
-			{
-				Tile t = tiles.get(j);
-				if(t.getType()==Tile.EMPTY)
-					continue;
-				if(t.getType()==Tile.PLUS)
-				{
-					//gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
-					button.add(getDisplayButton());
-					row.get(i).addView(button.get(button.size()-1));
-				}
-				else
-				{
-					gameState.add(i, j, t.getType(), t.isPositive());
-		    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
-					((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
-					updateButtons(gameState.updatePlusTiles(i, j),i,j);
-//					Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
-					setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());
-				}
-			}
-		}
-		gameState = temp;
-		RowGroup.print(gameState.getRows());
-	}
-	
-	public void setGameState(GameState gs){
-		gameState = gs;
-	}
-	
-	/**
-	 * Should only ever be called at the start of an activity!
-	 */
-	public void applyGameState(){
-		Log.d("a-t", "Undo in progress");
-		//Clear what the constructor added
-		table.removeViewAt(1);
-		button.remove(0);
-		row.remove(0);
-		int i = 0;
-		RowGroup.print(gameState.getRows());
 		
-		//Go through all rows and add the tiles
-		for(Row templateRow : gameState.getRows()){
-			row.add(new TableRow(this));
-			row.get(row.size()-1).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));			
-			table.addView(row.get(row.size()-1));
-			i = 0;
-			for(Tile t : templateRow.getTiles()){	
-				Log.d("a-t", "Tile "+t.getSymbol() + " at "+templateRow.getPosition()+ ", "+i);
-				if(t.getType() == Tile.EMPTY){
-					row.get(templateRow.getPosition()).addView(getDisplayButton());
-				}else{
-					Log.d("a-t", "Tile "+t.getSymbol()+" added");
-					button.add(getButton(templateRow.getPosition(),i));
-					button.get(button.size()-1).setText(Tile.getSymbol(t.getType()));
-					row.get(templateRow.getPosition()).addView(button.get(button.size()-1));
-					if(t.getType() != Tile.PLUS)
-						setButton(templateRow.getPosition(),i,button.get(button.size()-1),t.getType());
-				}
-				i++;
-			}			
+		gameState = new GameState();
+		while(!moves.isEmpty())
+		{
+			Pos m = moves.pop();
+			int i = m.row;
+			int j = m.col;
+			Tile t = temp.getRows().get(i).getTiles().get(j);
+			gameState.add(i, j, t.getType(), t.isPositive());
+    		gameState.addTile(i, j, new Tile(t.getType(), t.isPositive()));
+			((Button) row.get(i).getChildAt(j)).setText(Tile.getSymbol(t.getType()));
+			updateButtons(gameState.updatePlusTiles(i, j),i,j);
+//			Log.d("a-t", i+", "+j+" to be "+t.getSymbol()+" ID = "+id);
+			setButton(i, j, (Button) row.get(i).getChildAt(j), t.getType());
 		}
-		Log.d("a-t", "bsize: "+button.size()+" row 0: "+row.get(0).getChildCount());		
-		table.invalidate();
-	}
+	}	
 }

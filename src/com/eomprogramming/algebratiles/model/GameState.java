@@ -10,84 +10,72 @@ import android.util.Log;
 
 
 public class GameState {
-	public Stack<TileLayout> states;
-	public Stack<RowGroup> states2;
-	public static GameState saved;
+	public TileLayout tileLayout;
+	public RowGroup rowGroup;
+	public Stack<Pos> moves;
 	public static QEquation q;
 	
 	public GameState()
 	{
-		states = new Stack<TileLayout>();
-		states.push(new TileLayout());
-		states2 = new Stack<RowGroup>();
-		states2.push(new RowGroup());
+		tileLayout = new TileLayout();
+		rowGroup = new RowGroup();
+		moves = new Stack<Pos>();
 	}
 	
 	//start row group methods
 	public boolean addTile(int row, int col, Tile t){
-		//states2.peek().print();
-		RowGroup r = states2.peek().clone();
-		states2.push(r);
-		boolean b = states2.peek().addTile(row, col, t);
-		//states2.peek().print();
-		if(states2.size() > 1)
-		{
-			//states2.get(states2.size()-2).print();
-			//if(states2.get(states2.size()-2).getRows().get(0) == states2.get(states2.size()-1).getRows().get(0)) Log.d("...", "#fail");
-		}
-		return b;
+		return rowGroup.addTile(row, col, t);
 	}
 	
 	public LinkedList<Pos> updatePlusTiles(int row, int col){
-		return states2.peek().updatePlusTiles(row, col);		
+		return rowGroup.updatePlusTiles(row, col);		
 	}
 	
 	public ArrayList<Row> getRows(){
-		return states2.peek().getRows();
+		return rowGroup.getRows();
 	}
 	//end row group methods
 	
 	public int getPrevNumRows()
 	{
-		return states.peek().getPrevNumRows();
+		return tileLayout.getPrevNumRows();
 	}
 	
 	public int getPrevNumCols()
 	{
-		return states.peek().getPrevNumCols();
+		return tileLayout.getPrevNumCols();
 	}
 	
 	public ArrayList<Boolean> getRowSign()
 	{
-		return states.peek().rowSign;
+		return tileLayout.rowSign;
 	}
 	
 	public ArrayList<Boolean> getColSign()
 	{
-		return states.peek().colSign;
+		return tileLayout.colSign;
 	}
 	
 	public ArrayList<Integer> getRowType()
 	{
-		return states.peek().rowType;
+		return tileLayout.rowType;
 	}
 	
 	public ArrayList<Integer> getColType()
 	{
-		return states.peek().colType;
+		return tileLayout.colType;
 	}
 	
+	//from tile layout
 	public void add(int row, int col, int type, boolean isPositive)
 	{
-		TileLayout t = states.peek().clone();
-		t.add(row, col, type, isPositive);
-		states.push(t);
-		Log.d("type", Tile.getSymbol(type));
+		moves.push(new Pos(row, col));
+		tileLayout.add(row, col, type, isPositive);
 	}
 	
 	public boolean isValid(int row, int col, int type, boolean isPositive)
 	{
-		return states.peek().isValid(row, col, type, isPositive);
+		return tileLayout.isValid(row, col, type, isPositive);
 	}
 	
 	/**
@@ -98,18 +86,6 @@ public class GameState {
 	 */
 	public boolean isHorizontal(int row, int col)
 	{
-		return states.peek().isHorizontal(row, col);
-	}
-	
-	public GameState undo()
-	{
-		if(states2.size() != 0)
-		{
-			states.pop();
-			states2.pop();
-		}
-		
-
-		return this;
+		return tileLayout.isHorizontal(row, col);
 	}
 }
